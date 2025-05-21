@@ -1,10 +1,17 @@
 package org.spring.theguesthouse.service;
 
 import org.spring.theguesthouse.dto.DetailedCustomerDto;
+import org.spring.theguesthouse.entity.Customer;
 
 public interface CustomerService {
 
-    public String addCustomer (DetailedCustomerDto customer);
+    Customer detailedCustomerDtoToCustomer(DetailedCustomerDto c);
 
-    public String deleteCustomer(DetailedCustomerDto customer);
+    String addCustomer (DetailedCustomerDto customer);
+
+    String deleteCustomerById(Long customerID);
+
+    String updateCustomer(DetailedCustomerDto customer);
+
+
 }

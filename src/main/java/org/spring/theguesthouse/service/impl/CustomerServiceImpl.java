@@ -13,22 +13,28 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepo customerRepo;
 
-    private Customer detailedCustomerDtoToKund (DetailedCustomerDto c) {
+    public Customer detailedCustomerDtoToCustomer(DetailedCustomerDto c) {
         return Customer.builder().id(c.getId()).name(c.getName()).tel(c.getTel()).build();
     }
 
     @Override
     public String addCustomer(DetailedCustomerDto customer) {
-        customerRepo.save(detailedCustomerDtoToKund(customer));
-
+        customerRepo.save(detailedCustomerDtoToCustomer(customer));
         return "Customer was successfully added";
     }
 
     @Override
-    public String deleteCustomer(DetailedCustomerDto customer) {
-        customerRepo.delete(detailedCustomerDtoToKund(customer));
-
+    public String deleteCustomerById(Long customerId) {
+        if (!customerRepo.existsById(customerId)) {
+            return "Customer not found";
+        }
+        customerRepo.deleteById(customerId);
         return "Customer was successfully deleted";
+    }
+
+    @Override
+    public String updateCustomer(DetailedCustomerDto customer) {
+        return "";
     }
 
 }
