@@ -1,12 +1,13 @@
 package org.spring.theguesthouse.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,7 +20,7 @@ public class Room {
     private Long id;
     private int roomNumber;
 
-    public Room(int roomNumber) {
-        this.roomNumber = roomNumber;
-    }
+    @ManyToMany(mappedBy = "rooms")
+    private List<Booking> bookings = new ArrayList<>();
+
 }

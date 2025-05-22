@@ -33,5 +33,6 @@ public class Booking {
 
     public void addRoom(Room room) {
         rooms.add(room);
+        room.getBookings().add(this);
     }
 }
