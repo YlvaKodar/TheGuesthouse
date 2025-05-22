@@ -6,6 +6,7 @@ import org.spring.theguesthouse.dto.RoomDto;
 import org.spring.theguesthouse.entity.Booking;
 import org.spring.theguesthouse.dto.BookingDTO;
 import org.spring.theguesthouse.dto.DetailedBookingDTO;
+import org.spring.theguesthouse.entity.Customer;
 import org.spring.theguesthouse.entity.Room;
 import org.spring.theguesthouse.repository.BookingRepo;
 import org.spring.theguesthouse.repository.CustomerRepo;
@@ -51,13 +52,21 @@ public class BookingServiceImpl implements BookingService {
         if (dto == null) {
             return null;
         }
-        // Create new Booking using builder pattern
+
+        //Get customer or throw exception
+        Customer customer = customerRepo.findById(dto.getCustomer().getId()).
+                orElseThrow(() -> new RuntimeException("Cannot make booking; customer reference is missing"));
+
+        List<Room> rooms = dto.getRooms().stream().map(roomService::roomDtoToRoom).toList();
+
+        //Create new Booking using builder pattern
         return Booking.builder()
                 .id(dto.getId())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
+                .customer(customer)
+                .rooms(rooms)
                 .build();
-
     }
 
     @Override
