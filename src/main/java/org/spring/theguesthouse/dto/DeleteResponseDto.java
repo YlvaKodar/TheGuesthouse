@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 
-public class DeleteCustomerResponseDto {
+public class DeleteResponseDto {
     boolean success;
     String message;
 

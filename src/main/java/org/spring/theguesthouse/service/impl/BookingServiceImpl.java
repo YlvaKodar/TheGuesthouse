@@ -1,25 +1,18 @@
 package org.spring.theguesthouse.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.spring.theguesthouse.dto.CustomerDto;
-import org.spring.theguesthouse.dto.RoomDto;
+import org.spring.theguesthouse.dto.*;
 import org.spring.theguesthouse.entity.Booking;
-import org.spring.theguesthouse.dto.BookingDTO;
-import org.spring.theguesthouse.dto.DetailedBookingDTO;
 import org.spring.theguesthouse.entity.Customer;
 import org.spring.theguesthouse.entity.Room;
 import org.spring.theguesthouse.repository.BookingRepo;
 import org.spring.theguesthouse.repository.CustomerRepo;
-import org.spring.theguesthouse.repository.RoomRepo;
 import org.spring.theguesthouse.service.BookingService;
 import org.spring.theguesthouse.service.RoomService;
-import org.spring.theguesthouse.service.CustomerService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -106,4 +99,14 @@ public class BookingServiceImpl implements BookingService {
     public List<DetailedBookingDTO> getAllDetailedBookingDtos() {
         return bookingRepo.findAll().stream().map(this::bookingToDetailedDto).toList();
     }
-}
+
+    @Override
+    public DeleteResponseDto deleteBooking(Long bookingId) {
+        return bookingRepo.findById(bookingId).
+                map(booking -> { bookingRepo.deleteById(bookingId);
+                return new DeleteResponseDto(true, "Booking has been deleted.");})
+        .orElse(new DeleteResponseDto(false, "Booking does not exists"));
+
+    }
+
+    }
