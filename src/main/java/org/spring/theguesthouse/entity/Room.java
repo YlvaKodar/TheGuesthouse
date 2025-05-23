@@ -21,6 +21,7 @@ public class Room {
     private int roomNumber;
 
     @ManyToMany(mappedBy = "rooms")
-    private List<Booking> bookings;
+    @Builder.Default
+    private List<Booking> bookings = new ArrayList<>();
 
 }

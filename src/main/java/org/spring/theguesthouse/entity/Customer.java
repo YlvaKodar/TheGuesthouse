@@ -21,7 +21,8 @@ public class Customer {
     private String tel;
 
     @OneToMany(mappedBy = "customer")
-    private List<Booking> bookings;
+    @Builder.Default
+    private List<Booking> bookings = new ArrayList<>();
 
     public void addBooking(Booking booking) {
         bookings.add(booking);

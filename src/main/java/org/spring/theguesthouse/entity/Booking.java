@@ -29,7 +29,8 @@ public class Booking {
 
     @ManyToMany
     @JoinTable()
-    private List<Room> rooms;
+    @Builder.Default
+    private List<Room> rooms = new ArrayList<>();
 
     public void addRoom(Room room) {
         rooms.add(room);
