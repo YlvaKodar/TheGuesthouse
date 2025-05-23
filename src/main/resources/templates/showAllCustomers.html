@@ -18,8 +18,8 @@
         <td th:text="${customer.id}">1</td>
         <td th:text="${customer.name}">John</td>
         <td><a th:href="@{/customers/details/{id}(id=${customer.id})}">Details</a></td>|
-        <td><a th:href="@{/customers/deleteById/{id}(id=${customer.id})}">Delete</a></td>
-
+         <td><a th:href="@{/customers/{id}/booking/create(id=${customer.id})}">Add Booking</a></td> |
+         <td><a th:href="@{/customers/deleteById/{id}(id=${customer.id})}">Delete</a></td>
     </tr>
 </table>
 
