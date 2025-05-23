@@ -37,8 +37,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDto getCustomerById(Long id) {
-        return customerRepo.findById(id).map(this::customerToCustomerDto).orElse(null);
+    public DetailedCustomerDto getCustomerById(Long id) {
+        return customerRepo.findById(id).map(this::customerToDetailedCustomerDto).orElse(null);
     }
 
     @Override
