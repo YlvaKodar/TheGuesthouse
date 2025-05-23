@@ -5,11 +5,8 @@ import org.spring.theguesthouse.dto.CustomerDto;
 import org.spring.theguesthouse.dto.DetailedCustomerDto;
 import org.spring.theguesthouse.service.CustomerService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -31,10 +28,9 @@ public class CustomerController {
         return "showAllCustomers";
     }
 
-    //TODO: ändra customer till detailed
-    @RequestMapping("/details/{id}")
+    @GetMapping("/details/{id}")
     public String showCustomerDetails(@PathVariable Long id, Model model) {
-        CustomerDto customer = customerService.getCustomerById(id);
+        DetailedCustomerDto customer = customerService.getCustomerById(id);
         model.addAttribute("customer", customer);
         return "detailedCustomer";
     }
@@ -43,6 +39,15 @@ public class CustomerController {
     public String createCustomer(@RequestParam String name, @RequestParam String tel, Model model) {
         customerService.addCustomer(DetailedCustomerDto.builder().name(name).tel(tel).build());
         return "redirect:/customers/all";
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateCustomer(@PathVariable Long id, @RequestParam String name, @RequestParam String tel, Model model) {
+        DetailedCustomerDto updatedCustomer = DetailedCustomerDto.builder()
+                .id(id).name(name).tel(tel).build();
+
+        customerService.updateCustomer(updatedCustomer);
+        return "redirect:/customers/details/" + id;
     }
 
     @RequestMapping(path = "/deleteById/{id}")
