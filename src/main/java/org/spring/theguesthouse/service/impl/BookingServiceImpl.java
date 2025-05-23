@@ -26,11 +26,8 @@ import java.util.stream.Collectors;
 public class BookingServiceImpl implements BookingService {
 
     private final RoomService roomService;
-    private final CustomerService customerService;
-
     private final BookingRepo bookingRepo;
     private final CustomerRepo customerRepo;
-    private final RoomRepo roomRepo;
 
     @Override
     public BookingDTO bookingToDto(Booking booking) {
