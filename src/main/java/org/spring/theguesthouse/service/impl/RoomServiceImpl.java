@@ -26,10 +26,6 @@ public class RoomServiceImpl implements RoomService {
         return RoomDto.builder().id(r.getId()).roomNumber(r.getRoomNumber()).build();
     }
 
-    @Override
-    public Room roomDtoToRoom(RoomDto r){
-        return Room.builder().roomNumber(r.getRoomNumber()).build();
-    }
 
     @Override
     public List<RoomDto> getAllRooms() {
@@ -45,9 +41,7 @@ public class RoomServiceImpl implements RoomService {
                     // Check if current dates are within the booking period
                     return !endDate.before(booking.getStartDate()) && !startDate.after(booking.getEndDate());
                 })
-                .flatMap(booking -> booking.getRooms().stream())
-                .map(Room::getId)
-                .collect(Collectors.toSet());
+                .map(booking -> booking.getRoom().getId()).collect(Collectors.toSet());
 
         // Return all rooms that are NOT currently booked
         return roomRepo.findAll().stream()

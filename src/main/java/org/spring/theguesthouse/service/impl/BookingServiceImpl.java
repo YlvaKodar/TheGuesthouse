@@ -13,13 +13,9 @@ import org.spring.theguesthouse.repository.CustomerRepo;
 import org.spring.theguesthouse.repository.RoomRepo;
 import org.spring.theguesthouse.service.BookingService;
 import org.spring.theguesthouse.service.RoomService;
-import org.spring.theguesthouse.service.CustomerService;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +24,7 @@ public class BookingServiceImpl implements BookingService {
     private final RoomService roomService;
     private final BookingRepo bookingRepo;
     private final CustomerRepo customerRepo;
+    private final RoomRepo roomRepo;
 
     @Override
     public BookingDTO bookingToDto(Booking booking) {
@@ -39,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
         return DetailedBookingDTO.builder().id(booking.getId())
                 .startDate(booking.getStartDate()).endDate(booking.getEndDate())
                 .customer(new CustomerDto(booking.getCustomer().getId(), booking.getCustomer().getName()))
-                .rooms(booking.getRooms().stream().map(roomService::roomToDto).toList())
+                .room(new RoomDto(booking.getRoom().getId(), booking.getRoom().getRoomNumber()))
                 .build();
     }
 
@@ -54,7 +51,9 @@ public class BookingServiceImpl implements BookingService {
         Customer customer = customerRepo.findById(dto.getCustomer().getId()).
                 orElseThrow(() -> new RuntimeException("Cannot make booking; customer reference is missing"));
 
-        List<Room> rooms = dto.getRooms().stream().map(roomService::roomDtoToRoom).toList();
+        //Get room or throw exception
+        Room room = roomRepo.findById(dto.getRoom().getId()).
+                orElseThrow(() -> new RuntimeException("Cannot make booking; customer reference is missing"));
 
         //Create new Booking using builder pattern
         return Booking.builder()
@@ -62,7 +61,7 @@ public class BookingServiceImpl implements BookingService {
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
                 .customer(customer)
-                .rooms(rooms)
+                .room(room)
                 .build();
     }
 
@@ -72,30 +71,6 @@ public class BookingServiceImpl implements BookingService {
         return "Booking successfully added";
     }
 
-    public boolean roomsAvailable(List<Long> roomIds, Date startDate, Date endDate) {
-
-        if (roomIds == null || startDate == null || endDate == null) {
-            return false;
-        }
-
-        List<Booking> allBookings = bookingRepo.findAll();
-
-        for (Booking existingBooking : allBookings) {
-            // Check if dates overlap
-            if (startDate.before(existingBooking.getEndDate()) && endDate.after(existingBooking.getStartDate())) {
-
-                // Check if any requested room is already booked
-                for (Long roomId : roomIds) {
-                    for (Room room : existingBooking.getRooms()) {
-                        if (room.getId().equals(roomId)) {
-                            return false; // Room is unavailable
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
 
     @Override
     public List<BookingDTO> getAllBookingDtos() {

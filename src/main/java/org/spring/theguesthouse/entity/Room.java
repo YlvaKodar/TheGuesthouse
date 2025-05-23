@@ -20,7 +20,7 @@ public class Room {
     private Long id;
     private int roomNumber;
 
-    @ManyToMany(mappedBy = "rooms")
+    @OneToMany(mappedBy = "room")
     @Builder.Default
     private List<Booking> bookings = new ArrayList<>();
 

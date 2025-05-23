@@ -18,5 +18,5 @@ public class DetailedBookingDTO {
     private Date startDate;
     private Date endDate;
     private CustomerDto customer;
-    private List<RoomDto> rooms;
+    private RoomDto room;
 }

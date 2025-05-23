@@ -27,13 +27,8 @@ public class Booking {
     @JoinColumn(nullable = false)
     private Customer customer;
 
-    @ManyToMany
-    @JoinTable()
-    @Builder.Default
-    private List<Room> rooms = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Room room;
 
-    public void addRoom(Room room) {
-        rooms.add(room);
-        room.getBookings().add(this);
-    }
 }
