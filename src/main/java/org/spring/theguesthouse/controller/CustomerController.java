@@ -31,6 +31,14 @@ public class CustomerController {
         return "showAllCustomers";
     }
 
+    //TODO: ändra customer till detailed
+    @RequestMapping("/details/{id}")
+    public String showCustomerDetails(@PathVariable Long id, Model model) {
+        CustomerDto customer = customerService.getCustomerById(id);
+        model.addAttribute("customer", customer);
+        return "detailedCustomer";
+    }
+
     @PostMapping("/create")
     public String createCustomer(@RequestParam String name, @RequestParam String tel, Model model) {
         customerService.addCustomer(DetailedCustomerDto.builder().name(name).tel(tel).build());
