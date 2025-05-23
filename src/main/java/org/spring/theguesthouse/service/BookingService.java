@@ -9,7 +9,7 @@ import java.util.List;
 public interface BookingService {
     BookingDTO bookingToDto(Booking booking);
     DetailedBookingDTO bookingToDetailedDto(Booking booking);
-    Booking bookingDtoToBooking(DetailedBookingDTO dto);
+    Booking detailedBookingDtoToBooking(DetailedBookingDTO dto);
     String addBooking(DetailedBookingDTO booking);
     List<BookingDTO> getAllBookingDtos();
     List<DetailedBookingDTO> getAllDetailedBookingDtos();

@@ -19,7 +19,7 @@ public interface CustomerService {
 
     List<CustomerDto> getAllCustomers();
 
-    CustomerDto getCustomerById(Long id);
+    DetailedCustomerDto getCustomerById(Long id);
 
     DetailedCustomerDto addCustomer (DetailedCustomerDto customer);
 

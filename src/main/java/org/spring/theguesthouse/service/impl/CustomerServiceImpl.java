@@ -6,6 +6,7 @@ import org.spring.theguesthouse.dto.DeleteCustomerResponseDto;
 import org.spring.theguesthouse.dto.DetailedCustomerDto;
 import org.spring.theguesthouse.entity.Customer;
 import org.spring.theguesthouse.repository.CustomerRepo;
+import org.spring.theguesthouse.service.BookingService;
 import org.spring.theguesthouse.service.CustomerService;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepo customerRepo;
+    private final BookingService bookingService;
 
     public Customer detailedCustomerDtoToCustomer(DetailedCustomerDto c) {
         return Customer.builder().id(c.getId()).name(c.getName()).tel(c.getTel()).build();
@@ -28,7 +30,9 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public DetailedCustomerDto customerToDetailedCustomerDto(Customer c) {
-        return DetailedCustomerDto.builder().id(c.getId()).name(c.getName()).tel(c.getTel()).build();
+        return DetailedCustomerDto.builder().id(c.getId()).name(c.getName()).tel(c.getTel())
+                .bookings(c.getBookings().stream().map(bookingService::bookingToDto).toList())
+                .build();
     }
 
     @Override
@@ -37,8 +41,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDto getCustomerById(Long id) {
-        return customerRepo.findById(id).map(this::customerToCustomerDto).orElse(null);
+    public DetailedCustomerDto getCustomerById(Long id) {
+        return customerRepo.findById(id).map(this::customerToDetailedCustomerDto).orElse(null);
     }
 
     @Override

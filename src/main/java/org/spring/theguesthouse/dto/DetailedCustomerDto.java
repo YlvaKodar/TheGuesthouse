@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,5 +17,5 @@ public class DetailedCustomerDto {
     private Long id;
     private String name;
     private String tel;
-
+    private List<BookingDTO> bookings;
 }
