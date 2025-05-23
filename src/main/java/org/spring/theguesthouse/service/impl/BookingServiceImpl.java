@@ -68,43 +68,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public String addBooking(DetailedBookingDTO booking) {
-        // Extract room IDs from the booking
-        List<Long> roomIds = new ArrayList<>();
-        for (RoomDto room : booking.getRooms()) {
-            roomIds.add(room.getId());
-        }
-
-        // Check availability before saving
-        if (!roomsAvailable(roomIds, booking.getStartDate(), booking.getEndDate())) {
-            return "Booking failed, room is not available";
-        }
         bookingRepo.save(detailedBookingDtoToBooking(booking));
         return "Booking successfully added";
-    }
-
-    public boolean roomsAvailable(List<Long> roomIds, Date startDate, Date endDate) {
-
-        if (roomIds == null || startDate == null || endDate == null) {
-            return false;
-        }
-
-        List<Booking> allBookings = bookingRepo.findAll();
-
-        for (Booking existingBooking : allBookings) {
-            // Check if dates overlap
-            if (startDate.before(existingBooking.getEndDate()) && endDate.after(existingBooking.getStartDate())) {
-
-                // Check if any requested room is already booked
-                for (Long roomId : roomIds) {
-                    for (Room room : existingBooking.getRooms()) {
-                        if (room.getId().equals(roomId)) {
-                            return false; // Room is unavailable
-                        }
-                    }
-                }
-            }
-        }
-        return true;
     }
 
     @Override
