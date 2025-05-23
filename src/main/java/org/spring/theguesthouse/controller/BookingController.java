@@ -17,26 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingController {
 
-    private final BookingService bookingService;
-    private final BookingRepo bookingRepo; //TODO radera när bookingService är utbyggd
 
-    //localhost:8080/bookings/all
-    @RequestMapping("/all")
-    public String showAllBookings(Model model) {
-        List<BookingDTO> bookingDtoList = bookingService.getAllBookingDtos();
-        model.addAttribute("bookingTitle", "All Bookings");
-        model.addAttribute("allBookings", bookingDtoList);
-        model.addAttribute("id", "ID");
-        model.addAttribute("start", "Start Date");
-        model.addAttribute("end", "End Date");
-        return "showAllBookings";
-    }
-
-    //TODO Gå via Service
-    @RequestMapping(path = "/deleteById/{id}")
-    public String deleteBookingById(@PathVariable Long id, Model model) {
-        bookingRepo.deleteById(id);
-        return "redirect:/bookings/all";
-    }
 
 }
