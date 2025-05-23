@@ -42,12 +42,12 @@ public class BookingServiceImpl implements BookingService {
         return DetailedBookingDTO.builder().id(booking.getId())
                 .startDate(booking.getStartDate()).endDate(booking.getEndDate())
                 .customer(new CustomerDto(booking.getCustomer().getId(), booking.getCustomer().getName()))
-                .rooms(booking.getRooms().stream().map(roomService::roomToDto).collect(Collectors.toList()))
+                .rooms(booking.getRooms().stream().map(roomService::roomToDto).toList())
                 .build();
     }
 
     @Override
-    public Booking bookingDtoToBooking(DetailedBookingDTO dto) {
+    public Booking detailedBookingDtoToBooking(DetailedBookingDTO dto) {
         // Return null if the DTO is null
         if (dto == null) {
             return null;
@@ -81,7 +81,7 @@ public class BookingServiceImpl implements BookingService {
         if (!roomsAvailable(roomIds, booking.getStartDate(), booking.getEndDate())) {
             return "Booking failed, room is not available";
         }
-        bookingRepo.save(bookingDtoToBooking(booking));
+        bookingRepo.save(detailedBookingDtoToBooking(booking));
         return "Booking successfully added";
     }
 
