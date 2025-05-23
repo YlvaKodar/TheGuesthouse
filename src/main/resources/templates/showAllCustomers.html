@@ -6,14 +6,9 @@
 </head>
 <body>
 <h2 th:text="${customerTitle}">Customers</h2>
-
 <table>
-    <tr>
-        <th th:text="${id}">ID</th>
-        <th th:text="${name}">Name</th>
-        <th>Action</th>
-        <th>Action</th>
-        <th>Action</th>
+    <tr><th th:text="${id}"></th>
+        <th th:text="${name}"></th>
     <tr th:each="customer : ${allCustomers}">
         <td th:text="${customer.id}">1</td>
         <td th:text="${customer.name}">John</td>
