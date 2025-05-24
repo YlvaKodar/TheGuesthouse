@@ -21,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
-    private final RoomService roomService;
     private final BookingRepo bookingRepo;
     private final CustomerRepo customerRepo;
     private final RoomRepo roomRepo;
@@ -53,7 +52,7 @@ public class BookingServiceImpl implements BookingService {
 
         //Get room or throw exception
         Room room = roomRepo.findById(dto.getRoom().getId()).
-                orElseThrow(() -> new RuntimeException("Cannot make booking; customer reference is missing"));
+                orElseThrow(() -> new RuntimeException("Cannot make booking; room reference is missing"));
 
         //Create new Booking using builder pattern
         return Booking.builder()
@@ -63,6 +62,11 @@ public class BookingServiceImpl implements BookingService {
                 .customer(customer)
                 .room(room)
                 .build();
+    }
+
+    @Override
+    public DetailedBookingDTO getBookingById(long id) {
+        return bookingRepo.findById(id).map(this::bookingToDetailedDto).orElse(null);
     }
 
     @Override
