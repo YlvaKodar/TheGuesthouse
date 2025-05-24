@@ -75,7 +75,55 @@ public class BookingServiceImpl implements BookingService {
         return "Booking successfully added";
     }
 
+    @Override
+    public DetailedBookingDTO updateBooking(DetailedBookingDTO booking) {
+        // Validate input
+        if (booking.getId() == null) {
+            throw new RuntimeException("Booking ID is required for update");
+        }
 
+        // Validate dates
+        if (booking.getStartDate().after(booking.getEndDate())) {
+            throw new RuntimeException("Start date must be before end date");
+        }
+
+        // Find the existing booking or throw exception if not found
+        Booking existingBooking = bookingRepo.findById(booking.getId())
+                .orElseThrow(() -> new RuntimeException("Booking with id " + booking.getId() + " not found"));
+
+        // Determine which room to check availability for
+        Long roomIdToCheck = (booking.getRoom() != null) ?
+                booking.getRoom().getId() : existingBooking.getRoom().getId();
+
+        // Check room availability using RoomService (excluding current booking)
+        if (!roomService.isRoomAvailable(roomIdToCheck, booking.getStartDate(),
+                booking.getEndDate(), booking.getId())) {
+            Room room = roomRepo.findById(roomIdToCheck)
+                    .orElseThrow(() -> new RuntimeException("Room with id " + roomIdToCheck + " not found"));
+            throw new RuntimeException("Room " + room.getRoomNumber() +
+                    " is not available for the selected dates");
+        }
+
+        // Update dates (always allowed)
+        existingBooking.setStartDate(booking.getStartDate());
+        existingBooking.setEndDate(booking.getEndDate());
+
+        // Update room only if provided and different
+        if (booking.getRoom() != null &&
+                !existingBooking.getRoom().getId().equals(booking.getRoom().getId())) {
+            Room newRoom = roomRepo.findById(booking.getRoom().getId())
+                    .orElseThrow(() -> new RuntimeException("Room with id " + booking.getRoom().getId() + " not found"));
+            existingBooking.setRoom(newRoom);
+        }
+
+        // Customer remains the same - no customer updates allowed
+
+        // Save the updated booking
+        Booking updatedBooking = bookingRepo.save(existingBooking);
+
+        // Convert back to DTO and return
+        return bookingToDetailedDto(updatedBooking);
+    }
     @Override
     public List<BookingDTO> getAllBookingDtos() {
         return bookingRepo.findAll().stream().map(this::bookingToDto).toList();
