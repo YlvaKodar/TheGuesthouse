@@ -26,27 +26,40 @@ public class RoomServiceImpl implements RoomService {
         return RoomDto.builder().id(r.getId()).roomNumber(r.getRoomNumber()).build();
     }
 
-
     @Override
     public List<RoomDto> getAllRooms() {
         return roomRepo.findAll().stream().map(this::roomToDto).toList();
     }
 
+    // New, simplified version using the isRoomAvailable method
     @Override
     public List<RoomDto> getAllAvailableRooms(Date startDate, Date endDate) {
-        
-        // Find all rooms that are currently booked
-        Set<Long> bookedRoomIds = bookingRepo.findAll().stream()
-                .filter(booking -> {
-                    // Check if current dates are within the booking period
-                    return !endDate.before(booking.getStartDate()) && !startDate.after(booking.getEndDate());
-                })
-                .map(booking -> booking.getRoom().getId()).collect(Collectors.toSet());
-
-        // Return all rooms that are NOT currently booked
         return roomRepo.findAll().stream()
-                .filter(room -> !bookedRoomIds.contains(room.getId()))
+                .filter(room -> isRoomAvailable(room.getId(), startDate, endDate))
                 .map(this::roomToDto)
                 .toList();
+    }
+
+    @Override
+    public boolean isRoomAvailable(Long roomId, Date startDate, Date endDate, Long excludeBookingId) {
+        // Validate that the room exists
+        if (!roomRepo.existsById(roomId)) {
+            return false;
+        }
+
+        // Check if the room has any conflicting bookings
+        return bookingRepo.findAll().stream()
+                .filter(booking -> booking.getRoom().getId().equals(roomId))
+                .filter(booking -> excludeBookingId == null || !booking.getId().equals(excludeBookingId))
+                .noneMatch(booking -> {
+                    // Check if the date ranges overlap
+                    return !endDate.before(booking.getStartDate()) && !startDate.after(booking.getEndDate());
+                });
+    }
+
+    // Overloaded method with 3 parameters (simpler version)
+    @Override
+    public boolean isRoomAvailable(Long roomId, Date startDate, Date endDate) {
+        return isRoomAvailable(roomId, startDate, endDate, null);
     }
 }
