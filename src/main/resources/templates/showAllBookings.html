@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Bookings</title>
+</head>
+<body>
+<h2 th:text="${bookingTitle}"></h2>
+<table>
+  <tr><th th:text="${id}"></th>
+    <th th:text="${startDate}"></th>
+    <th th:text="${endDate}"></th>
+  <tr th:each="booking : ${allBookings}">
+    <td th:text="${booking.id}">1</td>
+    <td th:text="${booking.startDate}">2085-10-02</td>
+    <td th:text="${booking.endDate}">2089-04-09</td>
+    <td><a th:href="@{/booking/details/{id}(id=${booking.id})}">Details</a></td>|
+    <td><a th:href="@{/booking/deleteById/{id}(id=${booking.id})}">Delete</a></td>
+  </tr>
+
+  <!-- Placeholder (if empty list) -->
+  <tr th:if="${#lists.isEmpty(allBookings)}">
+    <td>1337</td>
+    <td>2085-10-12</td>
+    <td>2089-04-09</td>
+    <td>Details</td>
+    <td>Delete</td>
+  </tr>
+</table>
