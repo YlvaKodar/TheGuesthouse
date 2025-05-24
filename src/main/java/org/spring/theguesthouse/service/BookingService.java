@@ -11,6 +11,7 @@ public interface BookingService {
     DetailedBookingDTO bookingToDetailedDto(Booking booking);
     Booking detailedBookingDtoToBooking(DetailedBookingDTO dto);
     String addBooking(DetailedBookingDTO booking);
+    DetailedBookingDTO updateBooking(DetailedBookingDTO booking);
     List<BookingDTO> getAllBookingDtos();
     List<DetailedBookingDTO> getAllDetailedBookingDtos();
 }
