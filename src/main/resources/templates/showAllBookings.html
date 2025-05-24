@@ -2,6 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Bookings</title>
+
+  <style>
+    table {
+      border-collapse: collapse;
+      width: auto;
+    }
+    th, td {
+      text-align: left;
+      padding: 5px;
+      width: 100px; /* Fast bredd för alla kolumner */
+    }
+    th:first-child, td:first-child {
+      width: 50px; /* ID-kolumn lite smalare */
+    }
+  </style>
+
 </head>
 <body>
 <h2 th:text="${bookingTitle}"></h2>
@@ -13,7 +29,7 @@
     <td th:text="${booking.id}">1</td>
     <td th:text="${booking.startDate}">2085-10-02</td>
     <td th:text="${booking.endDate}">2089-04-09</td>
-    <td><a th:href="@{/booking/details/{id}(id=${booking.id})}">Details</a></td>|
+    <td><a th:href="@{/booking/details/{id}(id=${booking.id})}">Details</a>|
     <td><a th:href="@{/booking/deleteById/{id}(id=${booking.id})}">Delete</a></td>
   </tr>
 
