@@ -3,6 +3,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Customers</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: auto;
+        }
+        th, td {
+            text-align: left;
+            padding: 5px;
+            width: 100px; /* Fast bredd för alla kolumner */
+        }
+        th:first-child, td:first-child {
+            width: 50px; /* ID-kolumn lite smalare */
+        }
+    </style>
 </head>
 <body>
 <h2 th:text="${customerTitle}"></h2>
@@ -12,8 +26,8 @@
     <tr th:each="customer : ${allCustomers}">
         <td th:text="${customer.id}">1</td>
         <td th:text="${customer.name}">John</td>
-        <td><a th:href="@{/customers/details/{id}(id=${customer.id})}">Details</a></td>|
-         <td><a th:href="@{/customers/{id}/booking/create(id=${customer.id})}">Add Booking</a></td> |
+        <td><a th:href="@{/customers/details/{id}(id=${customer.id})}">Details</a> |
+         <td><a th:href="@{/customers/{id}/booking/create(id=${customer.id})}">Add Booking</a> |
          <td><a th:href="@{/customers/deleteById/{id}(id=${customer.id})}">Delete</a></td>
     </tr>
 </table>
