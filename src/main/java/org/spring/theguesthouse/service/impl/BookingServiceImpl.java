@@ -29,7 +29,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepo bookingRepo;
     private final CustomerRepo customerRepo;
     private final RoomRepo roomRepo;
-    private final RoomService roomService;
 
     @Override
     public BookingDTO bookingToDto(Booking booking) {
