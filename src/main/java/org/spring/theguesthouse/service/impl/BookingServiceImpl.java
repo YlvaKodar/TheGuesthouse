@@ -84,7 +84,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         // Validate dates
-        if (booking.getStartDate().after(booking.getEndDate())) {
+        if (booking.getStartDate().isAfter(booking.getEndDate())) {
             throw new RuntimeException("Start date must be before end date");
         }
 
@@ -125,6 +125,7 @@ public class BookingServiceImpl implements BookingService {
         // Convert back to DTO and return
         return bookingToDetailedDto(updatedBooking);
     }
+
     @Override
     public List<BookingDTO> getAllBookingDtos() {
         return bookingRepo.findAll().stream().map(this::bookingToDto).toList();

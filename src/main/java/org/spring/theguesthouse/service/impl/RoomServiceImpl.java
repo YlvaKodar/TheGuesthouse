@@ -9,7 +9,7 @@ import org.spring.theguesthouse.repository.RoomRepo;
 import org.spring.theguesthouse.service.RoomService;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,7 +33,7 @@ public class RoomServiceImpl implements RoomService {
 
     // New, simplified version using the isRoomAvailable method
     @Override
-    public List<RoomDto> getAllAvailableRooms(Date startDate, Date endDate) {
+    public List<RoomDto> getAllAvailableRooms(LocalDate startDate, LocalDate endDate) {
         return roomRepo.findAll().stream()
                 .filter(room -> isRoomAvailable(room.getId(), startDate, endDate))
                 .map(this::roomToDto)
@@ -41,7 +41,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public boolean isRoomAvailable(Long roomId, Date startDate, Date endDate, Long excludeBookingId) {
+    public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate, Long excludeBookingId) {
         // Validate that the room exists
         if (!roomRepo.existsById(roomId)) {
             return false;
@@ -53,13 +53,13 @@ public class RoomServiceImpl implements RoomService {
                 .filter(booking -> excludeBookingId == null || !booking.getId().equals(excludeBookingId))
                 .noneMatch(booking -> {
                     // Check if the date ranges overlap
-                    return !endDate.before(booking.getStartDate()) && !startDate.after(booking.getEndDate());
+                    return !endDate.isBefore(booking.getStartDate()) && !startDate.isAfter(booking.getEndDate());
                 });
     }
 
     // Overloaded method with 3 parameters (simpler version)
     @Override
-    public boolean isRoomAvailable(Long roomId, Date startDate, Date endDate) {
+    public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {
         return isRoomAvailable(roomId, startDate, endDate, null);
     }
 }
