@@ -13,14 +13,19 @@ import org.spring.theguesthouse.repository.CustomerRepo;
 import org.spring.theguesthouse.repository.RoomRepo;
 import org.spring.theguesthouse.service.BookingService;
 import org.spring.theguesthouse.service.RoomService;
+import org.spring.theguesthouse.service.CustomerService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
+    private final RoomService roomService;
     private final BookingRepo bookingRepo;
     private final CustomerRepo customerRepo;
     private final RoomRepo roomRepo;
@@ -135,4 +140,14 @@ public class BookingServiceImpl implements BookingService {
     public List<DetailedBookingDTO> getAllDetailedBookingDtos() {
         return bookingRepo.findAll().stream().map(this::bookingToDetailedDto).toList();
     }
-}
+
+    @Override
+    public DeleteResponseDto deleteBooking(Long bookingId) {
+        return bookingRepo.findById(bookingId).
+                map(booking -> { bookingRepo.deleteById(bookingId);
+                return new DeleteResponseDto(true, "Booking has been deleted.");})
+        .orElse(new DeleteResponseDto(false, "Booking does not exists"));
+
+    }
+
+    }

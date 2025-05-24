@@ -2,7 +2,7 @@ package org.spring.theguesthouse.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.spring.theguesthouse.dto.CustomerDto;
-import org.spring.theguesthouse.dto.DeleteCustomerResponseDto;
+import org.spring.theguesthouse.dto.DeleteResponseDto;
 import org.spring.theguesthouse.dto.DetailedCustomerDto;
 import org.spring.theguesthouse.entity.Customer;
 import org.spring.theguesthouse.repository.CustomerRepo;
@@ -53,16 +53,16 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public DeleteCustomerResponseDto deleteCustomerById (Long customerId) {
+    public DeleteResponseDto deleteCustomerById (Long customerId) {
         return customerRepo.findById(customerId)
                 .map(customer -> {
                     if (!customer.getBookings().isEmpty()) {
-                        return new DeleteCustomerResponseDto(false, "Customer cannot be deleted as it has a booking");
+                        return new DeleteResponseDto(false, "Customer cannot be deleted as it has a booking");
                     }else {
                     customerRepo.deleteById(customerId);
-                    return new DeleteCustomerResponseDto(true, "Customer has been deleted");}
+                    return new DeleteResponseDto(true, "Customer has been deleted");}
                 })
-                .orElse(new DeleteCustomerResponseDto(false, "Customer does not exist"));
+                .orElse(new DeleteResponseDto(false, "Customer does not exist"));
     }
 
     @Override
