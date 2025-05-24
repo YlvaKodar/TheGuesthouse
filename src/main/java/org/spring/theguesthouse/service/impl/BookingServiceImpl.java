@@ -100,25 +100,19 @@ public class BookingServiceImpl implements BookingService {
                     " is not available for the selected dates");
         }
 
-        // Update the dates
+        // Update dates (always allowed)
         existingBooking.setStartDate(booking.getStartDate());
         existingBooking.setEndDate(booking.getEndDate());
 
-        // Update customer if provided and different
-        if (booking.getCustomer() != null &&
-                !existingBooking.getCustomer().getId().equals(booking.getCustomer().getId())) {
-            Customer newCustomer = customerRepo.findById(booking.getCustomer().getId())
-                    .orElseThrow(() -> new RuntimeException("Customer with id " + booking.getCustomer().getId() + " not found"));
-            existingBooking.setCustomer(newCustomer);
-        }
-
-        // Update room if provided and different
+        // Update room only if provided and different
         if (booking.getRoom() != null &&
                 !existingBooking.getRoom().getId().equals(booking.getRoom().getId())) {
             Room newRoom = roomRepo.findById(booking.getRoom().getId())
                     .orElseThrow(() -> new RuntimeException("Room with id " + booking.getRoom().getId() + " not found"));
             existingBooking.setRoom(newRoom);
         }
+
+        // Customer remains the same - no customer updates allowed
 
         // Save the updated booking
         Booking updatedBooking = bookingRepo.save(existingBooking);
