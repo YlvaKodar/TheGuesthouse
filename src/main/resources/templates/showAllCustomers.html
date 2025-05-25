@@ -27,20 +27,21 @@
         <td th:text="${customer.id}">1</td>
         <td th:text="${customer.name}">John</td>
         <td><a th:href="@{/customers/details/{id}(id=${customer.id})}">Details</a> |
-         <td><a th:href="@{/customers/{id}/booking/create(id=${customer.id})}">Add Booking</a> |
-         <td><a th:href="@{/customers/deleteById/{id}(id=${customer.id})}">Delete</a></td>
-    </tr>
+    <td><a th:href="@{/bookings/create/{id}(id=${customer.id})}">Add Booking</a>
+        <!-- <td><a th:href="@{/customers/{id}/booking/create(id=${customer.id})}">Add Booking</a> | -->
+      <td><a th:href="@{/customers/deleteById/{id}(id=${customer.id})}">Delete</a></td>
+ </tr>
 </table>
 
 <h3>Add New Customer</h3>
 <form action="/customers/create" method="post">
-    <label>Name:</label><br>
-    <input type="text" name="name" required>
-    <br><br>
-    <label>Telephone:</label><br>
-    <input type="text" name="tel" required>
-    <br><br>
-    <button type="submit">Add Customer</button>
+ <label>Name:</label><br>
+ <input type="text" name="name" required>
+ <br><br>
+ <label>Telephone:</label><br>
+ <input type="text" name="tel" required>
+ <br><br>
+ <button type="submit">Add Customer</button>
 </form>
 </body>
 </html>
