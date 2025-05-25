@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Booking Details</title>
+</head>
+<body>
+<h2>Booking Details</h2>
+<style>
+  table {
+    border-collapse: collapse;
+    width: auto;
+  }
+  th, td {
+    text-align: left;
+    padding: 5px;
+    width: 100px; /* Fast bredd för alla kolumner */
+  }
+
+</style>
+<table>
+  <tr>
+    <th>ID:</th>
+    <td th:text="${booking.id}">1</td>
+  </tr>
+  <tr>
+    <th>Customer:</th>
+    <td th:text="${booking.customer.name}">John Doe</td>
+  </tr>
+  <tr>
+    <th>Room:</th>
+    <td th:text="'Room ' + ${booking.room.roomNumber}">Room 101</td>
+  </tr>
+  <tr>
+    <th>Start Date:</th>
+    <td th:text="${booking.startDate}">2025-10-15</td>
+  </tr>
+  <tr>
+    <th>End Date:</th>
+    <td th:text="${booking.endDate}">2025-10-18</td>
+  </tr>
+</table>
+
+<h3>Update Booking</h3>
+<form th:action="@{/bookings/update/{id}(id=${booking.id})}" method="post">
+  <label>Start Date:</label><br>
+  <input type="date" name="startDate" th:value="${booking.startDate}" required><br><br>
+
+  <label>End Date:</label><br>
+  <input type="date" name="endDate" th:value="${booking.endDate}" required><br><br>
+
+  <input type="hidden" name="roomId" th:value="${booking.room.id}">
+
+  <button type="submit">Update</button>
+</form>
+
+<br>
+<a href="/bookings/all">Back to Booking List</a>
+
+</body>
+</html>
