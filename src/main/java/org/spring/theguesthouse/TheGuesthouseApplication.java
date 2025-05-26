@@ -25,13 +25,13 @@ public class TheGuesthouseApplication {
         return args -> {
 
             Room r1 = Room.builder().roomNumber(101).maxGuests(1).build();
-            Room r2 = Room.builder().roomNumber(102).maxGuests(1).build();
-            Room r3 = Room.builder().roomNumber(103).maxGuests(4).build();
+            Room r2 = Room.builder().roomNumber(102).maxGuests(2).build();
+            Room r3 = Room.builder().roomNumber(103).maxGuests(3).build();
             Room r4 = Room.builder().roomNumber(201).maxGuests(1).build();
             Room r5 = Room.builder().roomNumber(202).maxGuests(4).build();
-            Room r6 = Room.builder().roomNumber(203).maxGuests(4).build();
+            Room r6 = Room.builder().roomNumber(203).maxGuests(3).build();
             Room r7 = Room.builder().roomNumber(301).maxGuests(4).build();
-            Room r8 = Room.builder().roomNumber(302).maxGuests(4).build();
+            Room r8 = Room.builder().roomNumber(302).maxGuests(2).build();
             Room r9 = Room.builder().roomNumber(303).maxGuests(1).build();
             Room r10 = Room.builder().roomNumber(1337).maxGuests(1).build();
 

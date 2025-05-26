@@ -41,9 +41,9 @@ class CustomerServiceImplTest2 {
 
     @BeforeEach
     public void setUp() {
-        Room r1 = Room.builder().roomNumber(101).build();
-        Room r2 = Room.builder().roomNumber(102).build();
-        Room r3 = Room.builder().roomNumber(103).build();
+        Room r1 = Room.builder().roomNumber(101).maxGuests(1).build();
+        Room r2 = Room.builder().roomNumber(102).maxGuests(1).build();
+        Room r3 = Room.builder().roomNumber(103).maxGuests(4).build();
 
         roomRepo.save(r1);
         roomRepo.save(r2);
@@ -59,15 +59,15 @@ class CustomerServiceImplTest2 {
 
         Booking b1 = Booking.builder().customer(c1)
                 .startDate(LocalDate.of(2025, 10, 15))
-                .endDate(LocalDate.of(2025, 10, 18)).room(r1).build();
+                .endDate(LocalDate.of(2025, 10, 18)).numberOfGuests(1).room(r1).build();
 
         Booking b2 = Booking.builder().customer(c1)
                 .startDate(LocalDate.of(2025, 10, 2))
-                .endDate(LocalDate.of(2025, 10, 3)).room(r2).build();
+                .endDate(LocalDate.of(2025, 10, 3)).numberOfGuests(1).room(r2).build();
 
         Booking b3 = Booking.builder().customer(c3)
                 .startDate(LocalDate.of(2025, 8, 15))
-                .endDate(LocalDate.of(2025, 9, 1)).room(r3).build();
+                .endDate(LocalDate.of(2025, 9, 1)).numberOfGuests(4).room(r3).build();
 
         bookingRepo.save(b1);
         bookingRepo.save(b2);
