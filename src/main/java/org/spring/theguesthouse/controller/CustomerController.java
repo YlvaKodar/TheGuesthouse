@@ -35,17 +35,17 @@ public class CustomerController {
         model.addAttribute("inputEmail", email);
 
         if (customerService.customerExist(name, email)){
-            model.addAttribute("error", "A customer with this name and contact information already exists");
+            model.addAttribute("nameError", "A customer with this name and contact information already exists");
             return showAllCustomers(model);
         }
 
         if (!customerService.legitName(name)){
-            model.addAttribute("error", "Enter first name and surname at min 2 characters each, seperated by space.");
+            model.addAttribute("nameError", "Enter first name and surname at min 2 characters each, seperated by space.");
             return showAllCustomers(model);
         }
 
         if (!customerService.legitEmail(email)){
-            model.addAttribute("error", "Enter valid email address");
+            model.addAttribute("emailError", "Enter valid email address");
             return showAllCustomers(model);
         }
 

@@ -11,10 +11,16 @@
         th, td {
             text-align: left;
             padding: 5px;
-            width: 100px; /* Fast bredd för alla kolumner */
+            width: 100px;
         }
         th:first-child, td:first-child {
-            width: 50px; /* ID-kolumn lite smalare */
+            width: 50px;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            display: block;
+            margin-top: 2px;
         }
     </style>
 </head>
@@ -34,15 +40,17 @@
 </table>
 
 <h3>Add New Customer</h3>
-<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
 <form action="/customers/create" method="post">
- <label>Name:</label><br>
-<input type="text" name="name" th:value="${inputName}" required minlength="5">
- <br><br>
- <label>Email:</label><br>
-<input type="email" name="email" th:value="${inputEmail}" required>
- <br><br>
- <button type="submit">Add Customer</button>
+    <label>Name:</label><br>
+    <input type="text" name="name" th:value="${inputName}" required minlength="5">
+    <span th:if="${nameError}" th:text="${nameError}" class="error"></span>
+    <br><br>
+    <label>Email:</label><br>
+    <input type="email" name="email" th:value="${inputEmail}" required>
+    <span th:if="${emailError}" th:text="${emailError}" class="error"></span>
+    <br><br>
+    <button type="submit">Add Customer</button>
 </form>
 </body>
 </html>
