@@ -64,7 +64,7 @@ public class TheGuesthouseApplication {
 
             Booking b2 = Booking.builder().customer(c1)
                     .startDate(LocalDate.of(2025, 10, 2))
-                    .endDate(LocalDate.of(2025, 10, 3)).numberOfGuests(1).room(r2).build();
+                    .endDate(LocalDate.of(2025, 10, 3)).numberOfGuests(2).room(r2).build();
 
             Booking b3 = Booking.builder().customer(c3)
                     .startDate(LocalDate.of(2025, 8, 15))
@@ -72,7 +72,7 @@ public class TheGuesthouseApplication {
 
             Booking b4 = Booking.builder().customer(c2)
                     .startDate(LocalDate.of(2025, 8, 16))
-                    .endDate(LocalDate.of(2025, 8, 18)).numberOfGuests(2).room(r6).build();
+                    .endDate(LocalDate.of(2025, 8, 18)).numberOfGuests(2).room(r8).build();
 
 
             bookingRepo.save(b1);
