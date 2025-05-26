@@ -63,6 +63,17 @@ public class CustomerController {
 
     @PostMapping("/update/{id}")
     public String updateCustomer(@PathVariable Long id, @RequestParam String name, @RequestParam String email, Model model) {
+
+        if (!customerService.legitName(name)){
+            model.addAttribute("nameError", "Enter first name and surname at min 2 characters each, seperated by space.");
+            return showCustomerDetails(id, model);
+        }
+
+        if (!customerService.legitEmail(email)){
+            model.addAttribute("emailError", "Enter valid email address");
+            return showCustomerDetails(id, model);
+        }
+
         DetailedCustomerDto updatedCustomer = DetailedCustomerDto.builder()
                 .id(id).name(name).email(email).build();
 
@@ -75,5 +86,4 @@ public class CustomerController {
         customerService.deleteCustomerById(id);
         return "redirect:/customers/all";
     }
-
 }

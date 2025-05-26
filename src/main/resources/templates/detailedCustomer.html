@@ -18,20 +18,26 @@
   th:last-child, td:last-child {
     width: 400px;
   }
+  .error {
+    color: red;
+    font-size: 12px;
+    display: block;
+    margin-top: 2px;
+  }
 
 </style>
 <table>
   <tr>
     <th>ID:</th>
-    <td th:text="${customer.id}">1</td>
+    <td th:text="${customer.id}"></td>
   </tr>
   <tr>
     <th>Name:</th>
-    <td th:text="${customer.name}">John Doe</td>
+    <td th:text="${customer.name}"></td>
   </tr>
   <tr>
-    <th>Telephone:</th>
-    <td th:text="${customer.tel}">123-456-7890</td>
+    <th>Email:</th>
+    <td th:text="${customer.email}"></td>
   </tr>
 </table>
 
@@ -52,12 +58,15 @@
 </p>
 
 <h3>Update Customer</h3>
+
 <form th:action="@{/customers/update/{id}(id=${customer.id})}" method="post">
   <label>Name:</label><br>
   <input type="text" name="name" th:value="${customer.name}" required><br><br>
+  <span th:if="${nameError}" th:text="${nameError}" class="error"></span>
 
-  <label>Telephone:</label><br>
-  <input type="text" name="tel" th:value="${customer.tel}" required><br><br>
+  <label>Email:</label><br>
+  <input type="email" name="email" th:value="${customer.email}" required><br><br>
+  <span th:if="${emailError}" th:text="${emailError}" class="error"></span>
 
   <button type="submit">Update</button>
 </form>

@@ -14,12 +14,12 @@ public class RoomDto {
     private int roomNumber;
     private int maxGuests;
 
-
     @Override
     public String toString() {
         return "{" +
                 "id: " + id +
                 ", nr: " + roomNumber +
+                ", beds available: " + maxGuests +
                 '}';
     }
 }
