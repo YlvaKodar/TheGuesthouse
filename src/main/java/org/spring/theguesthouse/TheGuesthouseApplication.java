@@ -46,11 +46,11 @@ public class TheGuesthouseApplication {
             roomRepo.save(r9);
             roomRepo.save(r10);
 
-            Customer c1 = Customer.builder().name("Maja Gräddnos").tel("018-225162").build();
-            Customer c2 = Customer.builder().name("Gammel-Maja").tel("018-225163").build();
-            Customer c3 = Customer.builder().name("Gullan von Arkadien").tel("018-225164").build();
-            Customer c4 = Customer.builder().name("Laban i Observatorielunden").tel("018-225165").build();
-            Customer c5 = Customer.builder().name("Sitting Bill").tel("018-225166").build();
+            Customer c1 = Customer.builder().name("Maja Gräddnos").email("maja@asgrand.ua").build();
+            Customer c2 = Customer.builder().name("Gammel-Maja").email("maja@domkyrkotornet.ua").build();
+            Customer c3 = Customer.builder().name("Gullan von Arkadien").email("gullan@arkadien.ua").build();
+            Customer c4 = Customer.builder().name("Laban i Observatorielunden").email("laban@observatorielunden.ua").build();
+            Customer c5 = Customer.builder().name("Sitting Bill").email("bill@amirikatt.us").build();
 
             customerRepo.save(c1);
             customerRepo.save(c2);

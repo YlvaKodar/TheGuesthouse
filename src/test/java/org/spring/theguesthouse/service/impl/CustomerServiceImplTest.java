@@ -49,9 +49,9 @@ class CustomerServiceImplTest {
         roomRepo.save(r2);
         roomRepo.save(r3);
 
-        Customer c1 = Customer.builder().name(trueName).tel("018-225162").build();
-        Customer c2 = Customer.builder().name("Gammel-Maja").tel("018-225163").build();
-        Customer c3 = Customer.builder().name("Gullan von Arkadien").tel("018-225164").build();
+        Customer c1 = Customer.builder().name("Maja Gräddnos").email("maja@asgrand.ua").build();
+        Customer c2 = Customer.builder().name("Gammel-Maja").email("maja@domkyrkotornet.ua").build();
+        Customer c3 = Customer.builder().name("Gullan von Arkadien").email("gullan@arkadien.ua").build();
 
         customerRepo.save(c1);
         customerRepo.save(c2);

@@ -20,8 +20,13 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepo customerRepo;
     private final BookingService bookingService;
 
+
+    private final String validName = "^[a-zA-ZåäöÅÄÖ]{2,}\\s[a-zA-ZåäöÅÄÖ]{2,}$"; //Name: min 2 char, space, 2 char.
+    private final String validEmail = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
+
     public Customer detailedCustomerDtoToCustomer(DetailedCustomerDto c) {
-        return Customer.builder().id(c.getId()).name(c.getName()).tel(c.getTel()).build();
+        return Customer.builder().id(c.getId()).name(c.getName()).email(c.getEmail()).build();
     }
 
 
@@ -30,7 +35,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public DetailedCustomerDto customerToDetailedCustomerDto(Customer c) {
-        return DetailedCustomerDto.builder().id(c.getId()).name(c.getName()).tel(c.getTel())
+        return DetailedCustomerDto.builder().id(c.getId()).name(c.getName()).email(c.getEmail())
                 .bookings(c.getBookings().stream().map(bookingService::bookingToDto).toList())
                 .build();
     }
@@ -70,10 +75,35 @@ public class CustomerServiceImpl implements CustomerService {
         Customer existingCustomer = customerRepo.findById(customerDto.getId()).orElseThrow(() -> new RuntimeException("Customer with id" + customerDto.getId() + " not found"));
 
         existingCustomer.setName(customerDto.getName());
-        existingCustomer.setTel(customerDto.getTel());
+        existingCustomer.setEmail(customerDto.getEmail());
         Customer updatedCustomer = customerRepo.save(existingCustomer);
 
         return customerToDetailedCustomerDto(updatedCustomer);
+    }
+
+    @Override
+    public Boolean customerExist(String name, String email) {
+        return getAllCustomers().stream()
+                .filter(customer -> customer.getName().equals(name))
+                .anyMatch(customer -> getCustomerById(customer.getId()).getEmail().equals(email));
+    }
+
+    @Override
+    public Boolean legitName(String name) {
+
+        if (name == null || name.trim().isEmpty()) {
+            return false;
+        }
+
+        return name.matches(validName);
+    }
+
+    @Override
+    public Boolean legitEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        return email.matches(validEmail);
     }
 
 }

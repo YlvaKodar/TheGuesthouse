@@ -36,15 +36,29 @@ public class CustomerController {
     }
 
     @PostMapping("/create")
-    public String createCustomer(@RequestParam String name, @RequestParam String tel, Model model) {
-        customerService.addCustomer(DetailedCustomerDto.builder().name(name).tel(tel).build());
+    public String createCustomer(@RequestParam String name, @RequestParam String email, Model model) {
+
+        if (customerService.customerExist(name, email)){
+            return "A customer with this name and contact information already exists";
+        }
+
+        if (!customerService.legitName(name)){
+            return "Enter first name and surname at min 2 characters each, seperated by space.";
+        }
+
+        if (!customerService.legitEmail(email)){
+            return "Enter valid email address";
+        }
+
+        customerService.addCustomer(DetailedCustomerDto.builder().name(name).email(email).build());
+
         return "redirect:/customers/all";
     }
 
     @PostMapping("/update/{id}")
-    public String updateCustomer(@PathVariable Long id, @RequestParam String name, @RequestParam String tel, Model model) {
+    public String updateCustomer(@PathVariable Long id, @RequestParam String name, @RequestParam String email, Model model) {
         DetailedCustomerDto updatedCustomer = DetailedCustomerDto.builder()
-                .id(id).name(name).tel(tel).build();
+                .id(id).name(name).email(email).build();
 
         customerService.updateCustomer(updatedCustomer);
         return "redirect:/customers/details/" + id;

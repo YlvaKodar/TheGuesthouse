@@ -18,7 +18,7 @@ public class Customer {
     @GeneratedValue
     private Long id;
     private String name;
-    private String tel;
+    private String email;
 
     @OneToMany(mappedBy = "customer")
     @Builder.Default
