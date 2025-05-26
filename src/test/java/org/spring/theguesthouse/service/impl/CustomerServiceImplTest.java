@@ -25,7 +25,7 @@ import java.util.List;
 @ActiveProfiles("test")
 @Transactional
 @Rollback
-class CustomerServiceImplTest2 {
+class CustomerServiceImplTest {
 
     @Autowired
     private CustomerRepo customerRepo;
