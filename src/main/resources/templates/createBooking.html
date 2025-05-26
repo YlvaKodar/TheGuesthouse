@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Create Booking</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: auto;
+    }
+    th, td {
+      text-align: left;
+      padding: 5px;
+      width: 100px; /* Fast bredd för alla kolumner */
+    }
+    th:first-child, td:first-child {
+      width: 50px; /* ID-kolumn lite smalare */
+    }
+  </style>
+</head>
+<body>
+<h3>Create Booking</h3>
+<h4>Select Dates</h4>
+<!--<form th:action="@{/customers/{id}/booking/create(id=${customer.id})}" th:object="${booking}" method="post">-->
+<form th:action="@{/bookings/create/{id}/room-availability(id=${customer.id})}" method="post">
+<!--<form th:action="@{/bookings/create/{id}(id=${customer.id})}" method="post">-->
+
+<label>Check-in Date:</label><br>
+  <input type="date" name="startDate" th:value="${startDate}" required><br><br>
+
+  <label>Check-out Date:</label><br>
+  <input type="date" name="endDate" th:value="${endDate}" required><br><br>
+
+  <button type="submit">Create Booking</button>
+</form>
+<div th:if="${availableRooms != null}">
+  <h4>Available Rooms (<span th:text="${#lists.size(availableRooms)}"></span>)</h4>
+<h4>Available Rooms</h4>
+  <form th:action="@{/bookings/create/{id}(id=${customer.id})}" method="post">
+
+    <input type="hidden" name="startDate" th:value="${startDate}">
+    <input type="hidden" name="endDate" th:value="${endDate}">
+
+    <table border="1">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Room Number</th>
+        <th>Select</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="room : ${availableRooms}">
+        <td th:text="${room.id}"></td>
+        <td th:text="${room.roomNumber}"></td>
+        <td><input type="radio" name="roomId" th:value="${room.id}" required></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <br>
+    <button type="submit">Create Booking</button>
+  </form>
+</div>
+</body>
+</html>
