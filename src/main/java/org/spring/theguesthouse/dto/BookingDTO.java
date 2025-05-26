@@ -15,4 +15,13 @@ public class BookingDTO {
     private Long id;
     private LocalDate startDate;
     private LocalDate endDate;
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id: " + id +
+                ", start: " + startDate +
+                ", end: " + endDate +
+                '}';
+    }
 }

@@ -12,4 +12,13 @@ import lombok.NoArgsConstructor;
 public class RoomDto {
     private Long id;
     private int roomNumber;
+
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id: " + id +
+                ", nr: " + roomNumber +
+                '}';
+    }
 }

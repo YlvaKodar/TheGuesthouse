@@ -13,4 +13,12 @@ import lombok.NoArgsConstructor;
 public class CustomerDto {
     private long id;
     private String name;
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id: " + id +
+                ", name: " + name + '\n' +
+                '}';
+    }
 }

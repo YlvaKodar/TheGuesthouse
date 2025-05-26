@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Bookings</title>
+
   <style>
     table {
       border-collapse: collapse;
@@ -16,6 +17,7 @@
       width: 50px; /* ID-kolumn lite smalare */
     }
   </style>
+
 </head>
 <body>
 <h2 th:text="${bookingTitle}"></h2>
@@ -27,7 +29,7 @@
     <td th:text="${booking.id}">1</td>
     <td th:text="${booking.startDate}">2085-10-02</td>
     <td th:text="${booking.endDate}">2089-04-09</td>
-    <td><a th:href="@{/bookings/details/{id}(id=${booking.id})}">Details</a> |
+    <td><a th:href="@{/bookings/details/{id}(id=${booking.id})}">Details</a>|
     <td><a th:href="@{/bookings/deleteById/{id}(id=${booking.id})}">Delete</a></td>
   </tr>
 
