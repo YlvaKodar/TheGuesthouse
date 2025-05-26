@@ -28,5 +28,4 @@ public class Booking {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Room room;
-
 }

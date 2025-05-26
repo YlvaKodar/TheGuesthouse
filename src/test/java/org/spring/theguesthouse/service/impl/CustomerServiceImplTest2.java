@@ -3,6 +3,7 @@ package org.spring.theguesthouse.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.spring.theguesthouse.dto.CustomerDto;
 import org.spring.theguesthouse.entity.Booking;
 import org.spring.theguesthouse.entity.Customer;
 import org.spring.theguesthouse.entity.Room;
@@ -17,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @SpringBootTest
@@ -27,19 +29,18 @@ class CustomerServiceImplTest2 {
 
     @Autowired
     private CustomerRepo customerRepo;
-
+    @Autowired
     private BookingRepo bookingRepo;
+    @Autowired
     private RoomRepo roomRepo;
-
     @Autowired
     private CustomerService customerService;
 
+    private String trueName = "Maja Gräddnos";
+    private String falseName = "Süleyman den Store";
+
     @BeforeEach
     public void setUp() {
-        customerRepo.deleteAll();
-        bookingRepo.deleteAll();
-        roomRepo.deleteAll();
-
         Room r1 = Room.builder().roomNumber(101).build();
         Room r2 = Room.builder().roomNumber(102).build();
         Room r3 = Room.builder().roomNumber(103).build();
@@ -48,7 +49,7 @@ class CustomerServiceImplTest2 {
         roomRepo.save(r2);
         roomRepo.save(r3);
 
-        Customer c1 = Customer.builder().name("Maja Gräddnos").tel("018-225162").build();
+        Customer c1 = Customer.builder().name(trueName).tel("018-225162").build();
         Customer c2 = Customer.builder().name("Gammel-Maja").tel("018-225163").build();
         Customer c3 = Customer.builder().name("Gullan von Arkadien").tel("018-225164").build();
 
@@ -75,6 +76,14 @@ class CustomerServiceImplTest2 {
 
 
     @Test
+    void getAllCustomers() {
+        List<CustomerDto> allCustomers = customerService.getAllCustomers();
+        assertTrue(allCustomers.size() == 3);
+        assertTrue(allCustomers.stream().map(c -> c.getName()).toList().contains(trueName));
+        assertFalse(allCustomers.stream().map(c -> c.getName()).toList().contains(falseName));
+    }
+
+    @Test
     void detailedCustomerDtoToCustomer() {
     }
 
@@ -84,10 +93,6 @@ class CustomerServiceImplTest2 {
 
     @Test
     void customerToDetailedCustomerDto() {
-    }
-
-    @Test
-    void getAllCustomers() {
     }
 
     @Test
