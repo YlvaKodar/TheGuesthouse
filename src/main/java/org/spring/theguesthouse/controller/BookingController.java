@@ -56,11 +56,12 @@ public class BookingController {
     public String updateBooking(@PathVariable Long id,
                                 @RequestParam String startDate,
                                 @RequestParam String endDate,
-                                Model model) {
+                                @RequestParam int numberOfGuests) {
         DetailedBookingDTO updatedBooking = DetailedBookingDTO.builder()
                 .id(id)
                 .startDate(LocalDate.parse(startDate))
                 .endDate(LocalDate.parse(endDate))
+                .numberOfGuests(numberOfGuests)
                 .build();
 
         bookingService.updateBooking(updatedBooking);
@@ -72,7 +73,7 @@ public class BookingController {
         bookingService.deleteBooking(id);
         return "redirect:/bookings/all";
     }
-    //localhost:8080/bookings/create
+
     @GetMapping("/create/{customerId}")
     public String showCreateBooking(@PathVariable Long customerId, Model model) {
         DetailedCustomerDto customer = customerService.getCustomerById(customerId);
@@ -82,22 +83,31 @@ public class BookingController {
     }
 
     @PostMapping("/create/{customerId}/room-availability")
-    public String showRoomAvailability(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, Model model) {
+    public String showRoomAvailability(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, Model model) {
         DetailedCustomerDto customer = customerService.getCustomerById(customerId);
         List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate);
 
         model.addAttribute("availableRooms", availableRooms);
         model.addAttribute("customer", customer);
         model.addAttribute("startDate", startDate);
+        model.addAttribute("numberOfGuests", numberOfGuests);
         model.addAttribute("endDate", endDate);
         return "createBooking";
     }
 
     @PostMapping("/create/{customerId}")
-    public String createBooking(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam Long roomId) {
+    public String createBooking(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, @RequestParam Long roomId, Model model) {
+
+        if (numberOfGuests < 1 || numberOfGuests > 4) {
+            model.addAttribute("error", "Number of guests must be between 1 and 4");
+            return "createBooking";
+        }
+
         CustomerDto customer = CustomerDto.builder().id(customerId).build();
         RoomDto room = RoomDto.builder().id(roomId).build();
-        DetailedBookingDTO booking = DetailedBookingDTO.builder().startDate(startDate).endDate(endDate).customer(customer).room(room).build();
+        DetailedBookingDTO booking = DetailedBookingDTO.builder().startDate(startDate).endDate(endDate).numberOfGuests(numberOfGuests).customer(customer).room(room).build();
+
+
         bookingService.addBooking(booking);
         return "redirect:/bookings/all";
     }

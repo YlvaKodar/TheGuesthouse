@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class RoomDto {
     private Long id;
     private int roomNumber;
+    private int maxGuests;
 
 
     @Override

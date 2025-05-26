@@ -19,6 +19,7 @@ public class Room {
     @GeneratedValue
     private Long id;
     private int roomNumber;
+    private int maxGuests;
 
     @OneToMany(mappedBy = "room")
     @Builder.Default

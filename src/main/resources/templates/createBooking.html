@@ -24,11 +24,14 @@
 <form th:action="@{/bookings/create/{id}/room-availability(id=${customer.id})}" method="post">
 <!--<form th:action="@{/bookings/create/{id}(id=${customer.id})}" method="post">-->
 
+  <label>Number of Guests:</label><br>
+  <input type="number" name="numberOfGuests" th:value="${numberOfGuests != null ? numberOfGuests : 1}" min="1" max="4" value="1" required><br>
+
 <label>Check-in Date:</label><br>
   <input type="date" name="startDate" th:value="${startDate}" required><br><br>
 
   <label>Check-out Date:</label><br>
-  <input type="date" name="endDate" th:value="${endDate}" required><br><br>
+  <input type="date" name="endDate" th:value="${endDate}" required><br>
 
   <button type="submit">Create Booking</button>
 </form>
@@ -39,12 +42,14 @@
 
     <input type="hidden" name="startDate" th:value="${startDate}">
     <input type="hidden" name="endDate" th:value="${endDate}">
+    <input type="hidden" name="numberOfGuests" th:value="${numberOfGuests}">
 
     <table border="1">
       <thead>
       <tr>
         <th>ID</th>
         <th>Room Number</th>
+        <th>Max Guests</th>
         <th>Select</th>
       </tr>
       </thead>
@@ -52,6 +57,7 @@
       <tr th:each="room : ${availableRooms}">
         <td th:text="${room.id}"></td>
         <td th:text="${room.roomNumber}"></td>
+        <td th:text="${room.maxGuests}"></td>
         <td><input type="radio" name="roomId" th:value="${room.id}" required></td>
       </tr>
       </tbody>
