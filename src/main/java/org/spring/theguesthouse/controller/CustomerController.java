@@ -28,31 +28,37 @@ public class CustomerController {
         return "showAllCustomers";
     }
 
-    @GetMapping("/details/{id}")
-    public String showCustomerDetails(@PathVariable Long id, Model model) {
-        DetailedCustomerDto customer = customerService.getCustomerById(id);
-        model.addAttribute("customer", customer);
-        return "detailedCustomer";
-    }
-
     @PostMapping("/create")
     public String createCustomer(@RequestParam String name, @RequestParam String email, Model model) {
 
+        model.addAttribute("inputName", name);
+        model.addAttribute("inputEmail", email);
+
         if (customerService.customerExist(name, email)){
-            return "A customer with this name and contact information already exists";
+            model.addAttribute("error", "A customer with this name and contact information already exists");
+            return showAllCustomers(model);
         }
 
         if (!customerService.legitName(name)){
-            return "Enter first name and surname at min 2 characters each, seperated by space.";
+            model.addAttribute("error", "Enter first name and surname at min 2 characters each, seperated by space.");
+            return showAllCustomers(model);
         }
 
         if (!customerService.legitEmail(email)){
-            return "Enter valid email address";
+            model.addAttribute("error", "Enter valid email address");
+            return showAllCustomers(model);
         }
 
         customerService.addCustomer(DetailedCustomerDto.builder().name(name).email(email).build());
 
         return "redirect:/customers/all";
+    }
+
+    @GetMapping("/details/{id}")
+    public String showCustomerDetails(@PathVariable Long id, Model model) {
+        DetailedCustomerDto customer = customerService.getCustomerById(id);
+        model.addAttribute("customer", customer);
+        return "detailedCustomer";
     }
 
     @PostMapping("/update/{id}")

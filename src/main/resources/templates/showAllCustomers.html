@@ -20,28 +20,27 @@
 </head>
 <body>
 <h2 th:text="${customerTitle}"></h2>
+
 <table>
     <tr><th th:text="${id}"></th>
         <th th:text="${name}"></th>
     <tr th:each="customer : ${allCustomers}">
         <td th:text="${customer.id}">1</td>
         <td th:text="${customer.name}">John</td>
-        <td><a th:href="@{/customers/details/{id}(id=${customer.id})}">Details</a> |
-    <td><a th:href="@{/bookings/create/{id}(id=${customer.id})}">Add Booking</a>
-        <!-- <td><a th:href="@{/customers/{id}/booking/create(id=${customer.id})}">Add Booking</a> | -->
+        <td><a th:href="@{/customers/details/{id}(id=${customer.id})}">Details</a>
+        <td><a th:href="@{/bookings/create/{id}(id=${customer.id})}">Add Booking</a>
       <td><a th:href="@{/customers/deleteById/{id}(id=${customer.id})}">Delete</a></td>
  </tr>
 </table>
 
 <h3>Add New Customer</h3>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
 <form action="/customers/create" method="post">
-    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
-
  <label>Name:</label><br>
- <input type="text" name="name" required>
+<input type="text" name="name" th:value="${inputName}" required minlength="5">
  <br><br>
  <label>Email:</label><br>
- <input type="email" name="email" required>
+<input type="email" name="email" th:value="${inputEmail}" required>
  <br><br>
  <button type="submit">Add Customer</button>
 </form>
