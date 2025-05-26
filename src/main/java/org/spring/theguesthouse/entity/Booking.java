@@ -20,6 +20,7 @@ public class Booking {
 
     private LocalDate startDate;
     private LocalDate endDate;
+    private int numberOfGuests;
 
     @ManyToOne
     @JoinColumn(nullable = false)

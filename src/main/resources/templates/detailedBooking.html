@@ -31,6 +31,10 @@
     <td th:text="'Room ' + ${booking.room.roomNumber}">Room 101</td>
   </tr>
   <tr>
+    <th>Number of guests:</th>
+    <td th:text="${booking.numberOfGuests}">2025-10-15</td>
+  </tr>
+  <tr>
     <th>Start Date:</th>
     <td th:text="${booking.startDate}">2025-10-15</td>
   </tr>
@@ -47,8 +51,11 @@
 
   <label>End Date:</label><br>
   <input type="date" name="endDate" th:value="${booking.endDate}" required><br><br>
+  <label>Number of Guests:</label><br>
+  <input type="number" name="numberOfGuests" th:value="${numberOfGuests != null ? numberOfGuests : 1}" min="1" max="4" value="1" required><br>
 
   <input type="hidden" name="roomId" th:value="${booking.room.id}">
+  <input type="hidden" name="numberOfGuests" th:value="${booking.numberOfGuests}">
 
   <button type="submit">Update</button>
 </form>

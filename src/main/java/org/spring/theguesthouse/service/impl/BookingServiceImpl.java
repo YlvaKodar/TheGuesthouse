@@ -34,12 +34,29 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public DetailedBookingDTO bookingToDetailedDto(Booking booking) {
+        return DetailedBookingDTO.builder()
+                .id(booking.getId())
+                .startDate(booking.getStartDate())
+                .endDate(booking.getEndDate())
+                .numberOfGuests(booking.getNumberOfGuests())
+                .customer(new CustomerDto(booking.getCustomer().getId(), booking.getCustomer().getName()))
+                .room(RoomDto.builder()
+                        .id(booking.getRoom().getId())
+                        .roomNumber(booking.getRoom().getRoomNumber())
+                        .build())
+                .build();
+    }
+
+    /*
+
+    @Override
+    public DetailedBookingDTO bookingToDetailedDto(Booking booking) {
         return DetailedBookingDTO.builder().id(booking.getId())
                 .startDate(booking.getStartDate()).endDate(booking.getEndDate())
                 .customer(new CustomerDto(booking.getCustomer().getId(), booking.getCustomer().getName()))
                 .room(new RoomDto(booking.getRoom().getId(), booking.getRoom().getRoomNumber()))
                 .build();
-    }
+    }*/
 
     @Override
     public Booking detailedBookingDtoToBooking(DetailedBookingDTO dto) {
@@ -61,6 +78,7 @@ public class BookingServiceImpl implements BookingService {
                 .id(dto.getId())
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
+                .numberOfGuests(dto.getNumberOfGuests())
                 .customer(customer)
                 .room(room)
                 .build();
@@ -96,6 +114,7 @@ public class BookingServiceImpl implements BookingService {
         // Determine which room to check availability for
         Long roomIdToCheck = (booking.getRoom() != null) ?
                 booking.getRoom().getId() : existingBooking.getRoom().getId();
+
 
         // Check room availability using RoomService (excluding current booking)
         if (!roomService.isRoomAvailable(roomIdToCheck, booking.getStartDate(),

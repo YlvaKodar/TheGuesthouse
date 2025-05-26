@@ -5,15 +5,16 @@ import org.spring.theguesthouse.dto.RoomDto;
 import org.spring.theguesthouse.entity.Room;
 import org.spring.theguesthouse.repository.RoomRepo;
 import org.spring.theguesthouse.service.RoomService;
-import org.spring.theguesthouse.service.impl.RoomServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
-//@RequestMapping((path ="/rooms")
+@RequestMapping(path ="/rooms")
 @RequiredArgsConstructor
 public class RoomController {
 
@@ -25,7 +26,6 @@ public class RoomController {
         List<RoomDto> roomsList = roomService.getAllRooms();
         model.addAttribute("roomsTitle", "Rooms");
         model.addAttribute("allRooms", roomsList);
-        model.addAttribute("ID", "id");
         model.addAttribute("displayRooms", "true");
         return "showAvailableRooms";
 

@@ -15,4 +15,5 @@ public class BookingDTO {
     private Long id;
     private LocalDate startDate;
     private LocalDate endDate;
+
 }
