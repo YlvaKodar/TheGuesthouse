@@ -10,6 +10,8 @@ import org.spring.theguesthouse.service.RoomService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,20 +33,37 @@ public class RoomServiceImpl implements RoomService {
         return roomRepo.findAll().stream().map(this::roomToDto).toList();
     }
 
-    // New, simplified version using the isRoomAvailable method
 
+    // New, simplified version using the isRoomAvailable method
     @Override
     public List<RoomDto> getAllAvailableRooms(LocalDate startDate, LocalDate endDate, int numberOfGuests) {
-        return roomRepo.findAll().stream()
+
+        List<RoomDto> allAvailableRooms = roomRepo.findAll().stream()
                 .filter(room -> room.getMaxGuests() >= numberOfGuests) // Capacity check
                 .filter(room -> isRoomAvailable(room.getId(), startDate, endDate)) // Availability check
                 .map(this::roomToDto)
                 .toList();
+
+        List<RoomDto> sizePrio = new ArrayList<>();
+
+        for (int targetSize = numberOfGuests; targetSize <= 4; targetSize++) {
+            int finalTargetSize = targetSize;
+            sizePrio = allAvailableRooms.stream()
+                    .filter(r -> r.getMaxGuests() == finalTargetSize)
+                    .toList();
+
+            if (!sizePrio.isEmpty()) {
+                break;
+            }
+        }
+
+        //Lista med i första hand rätt antal, i andra hand större.
+        return sizePrio;
     }
 
     @Override
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate, Long excludeBookingId) {
-        // Validate that the room exists
+        //Validate that the room exists
         //Booking existingBooking = bookingRepo.findById(booking.getId()).orElseThrow(() -> new RuntimeException("Booking with id" + booking.getId() + " not found"));
 
         // Check if the room has any conflicting bookings
