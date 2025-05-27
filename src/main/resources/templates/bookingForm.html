@@ -1,0 +1,14 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<label>Number of Guests:</label><br>
+<input type="number" name="numberOfGuests" th:value="${numberOfGuests != null ? numberOfGuests : 1}" min="1" max="4" required><br>
+
+<label>Start Date:</label><br>
+<input type="date" name="startDate" th:value="${startDate}" required><br><br>
+
+<label>End Date:</label><br>
+<input type="date" name="endDate" th:value="${endDate}" required><br><br>
+
+</body>
+</html>
