@@ -50,7 +50,7 @@ public class RoomServiceImpl implements RoomService {
         // Check if the room has any conflicting bookings
         return bookingRepo.findAll().stream()
                 .filter(booking -> booking.getRoom().getId().equals(roomId))
-                .filter(booking -> excludeBookingId == null || !booking.getId().equals(excludeBookingId))
+                .filter(booking -> !booking.getId().equals(excludeBookingId))
                 .noneMatch(booking -> {
                     // Check if the date ranges overlap
                     return !endDate.isBefore(booking.getStartDate()) && !startDate.isAfter(booking.getEndDate());

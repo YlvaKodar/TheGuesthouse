@@ -88,11 +88,18 @@ public class BookingController {
     public String showRoomAvailability(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, Model model, Errors errors) {
 
         DetailedCustomerDto customer = customerService.getCustomerById(customerId);
+
+        if (customer == null) {
+            model.addAttribute("error", "Could not get customer id. Please try again");
+            return "redirect:/customers/all";
+        }
+
         List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate, numberOfGuests);
 
-        //TEMPORÄRT ANROP TILL ALLA CHECKAT VI SKA GÖRA INNAN VI SKA SKAPA KUND
-        //OBS VI SKA JU INTE HA SÅHÄR PGA SKA JU GÖRA RETURN OM ERROR
-        allChecks(customer, startDate, endDate, numberOfGuests, model, availableRooms, null,false);
+        if (availableRooms.isEmpty()) {
+            model.addAttribute("error", "There are no available rooms");
+            return "redirect:/customers/all";
+        }
 
 
         model.addAttribute("availableRooms", availableRooms);
@@ -112,37 +119,6 @@ public class BookingController {
             return "createBooking";
         }
 
-        CustomerDto customer = CustomerDto.builder().id(customerId).build();
-        RoomDto room = RoomDto.builder().id(roomId).build();
-        DetailedBookingDTO booking = DetailedBookingDTO.builder().startDate(startDate).endDate(endDate).numberOfGuests(numberOfGuests).customer(customer).room(room).build();
-
-        bookingService.addBooking(booking);
-        return "redirect:/bookings/all";
-    }
-
-    public String allChecks(DetailedCustomerDto customer, LocalDate startDate, LocalDate endDate, int numberOfGuests,
-                            Model model, List<RoomDto> availableRooms, Long currentRoom, Boolean update) {
-        //OBS: ALLA dessa checkar är checkar och valideringar som ska göras av form
-        //innan man kan uppdatera en kund. Jag vet inte riktigt vad vi ska lägga dem (ett eller flera ställen?),
-        //vad vi ska returna etc, för jag är osäker på template-flödet.
-        //Lägger här så kan vi diskutera.
-
-        if (customer == null) {
-            model.addAttribute("error", "Could not get customer id. Please try again");
-            return "redirect:/customers/all";
-        }
-
-
-        if (numberOfGuests < 1 || numberOfGuests > 4) {
-            model.addAttribute("error", "Number of guests must be between 1 and 4");
-            return "redirect:/bookings/all";
-        }
-
-        if (availableRooms.isEmpty()) {
-            model.addAttribute("error", "There are no available rooms");
-            return "redirect:/bookings/all";
-        }
-
         if (!bookingService.checkDates(startDate)){
             model.addAttribute("error", "Please check that entered dates are in the uncertain future and not the unreachable passed.");
             return "redirect:/bookings/all";
@@ -153,9 +129,12 @@ public class BookingController {
             return "redirect:/bookings/all";
         }
 
-        //Nåt annat vi vill checka?
-        return "Trams!";
+        CustomerDto customer = CustomerDto.builder().id(customerId).build();
+        RoomDto room = RoomDto.builder().id(roomId).build();
+        DetailedBookingDTO booking = DetailedBookingDTO.builder().startDate(startDate).endDate(endDate).numberOfGuests(numberOfGuests).customer(customer).room(room).build();
 
+        bookingService.addBooking(booking);
+        return "redirect:/bookings/all";
     }
 
 }
