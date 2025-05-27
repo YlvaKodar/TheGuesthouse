@@ -43,19 +43,47 @@
     <td th:text="${booking.endDate}">2025-10-18</td>
   </tr>
 </table>
-
 <h3>Update Booking</h3>
-<form th:action="@{/bookings/update/{id}(id=${booking.id})}" method="post">
+<h4>Select Dates</h4>
+<p>Booking ID: <span th:text="${booking.id}">[Missing]</span></p>
+
+<form th:action="@{/bookings/create/{bookingId}/room-availability-update(bookingId=${booking.id})}" method="post">
   <div th:include="bookingForm"></div>
-
-  <input type="hidden" name="roomId" th:value="${booking.room.id}">
-  <input type="hidden" name="numberOfGuests" th:value="${booking.numberOfGuests}">
-
-  <button type="submit">Update</button>
+  <button type="submit">Create Booking</button>
 </form>
+<div th:if="${availableRooms != null}">
+  <h4>Available Rooms (<span th:text="${#lists.size(availableRooms)}"></span>)</h4>
+  <h4>Available Rooms</h4>
+  <form th:action="@{/bookings/update/{id}(id=${booking.id})}" method="post">
 
+    <input type="hidden" name="startDate" th:value="${startDate}">
+    <input type="hidden" name="endDate" th:value="${endDate}">
+    <input type="hidden" name="numberOfGuests" th:value="${numberOfGuests}">
+
+    <table border="1">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Room Number</th>
+        <th>Max Guests</th>
+        <th>Select</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="room : ${availableRooms}">
+        <td th:text="${room.id}"></td>
+        <td th:text="${room.roomNumber}"></td>
+        <td th:text="${room.maxGuests}"></td>
+        <td><input type="radio" name="newRoomId" th:value="${room.id}" required></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <br>
+    <button type="submit">Submit</button>
+  </form>
+</div>
 <br>
-<a href="/bookings/all">Back to Booking List</a>
-
+<a href="/customers/all">Back to Customer List</a>
 </body>
 </html>
