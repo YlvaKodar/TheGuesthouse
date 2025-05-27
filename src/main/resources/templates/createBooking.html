@@ -20,19 +20,8 @@
 <body>
 <h3>Create Booking</h3>
 <h4>Select Dates</h4>
-<!--<form th:action="@{/customers/{id}/booking/create(id=${customer.id})}" th:object="${booking}" method="post">-->
 <form th:action="@{/bookings/create/{id}/room-availability(id=${customer.id})}" method="post">
-<!--<form th:action="@{/bookings/create/{id}(id=${customer.id})}" method="post">-->
-
-  <label>Number of Guests:</label><br>
-  <input type="number" name="numberOfGuests" th:value="${numberOfGuests != null ? numberOfGuests : 1}" min="1" max="4" value="1" required><br>
-
-<label>Check-in Date:</label><br>
-  <input type="date" name="startDate" th:value="${startDate}" required><br><br>
-
-  <label>Check-out Date:</label><br>
-  <input type="date" name="endDate" th:value="${endDate}" required><br>
-
+  <div th:include="bookingForm"></div>
   <button type="submit">Create Booking</button>
 </form>
 <div th:if="${availableRooms != null}">
