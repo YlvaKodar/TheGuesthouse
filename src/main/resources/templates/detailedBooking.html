@@ -46,13 +46,7 @@
 
 <h3>Update Booking</h3>
 <form th:action="@{/bookings/update/{id}(id=${booking.id})}" method="post">
-  <label>Start Date:</label><br>
-  <input type="date" name="startDate" th:value="${booking.startDate}" required><br><br>
-
-  <label>End Date:</label><br>
-  <input type="date" name="endDate" th:value="${booking.endDate}" required><br><br>
-  <label>Number of Guests:</label><br>
-  <input type="number" name="numberOfGuests" th:value="${numberOfGuests != null ? numberOfGuests : 1}" min="1" max="4" value="1" required><br>
+  <div th:include="bookingForm"></div>
 
   <input type="hidden" name="roomId" th:value="${booking.room.id}">
   <input type="hidden" name="numberOfGuests" th:value="${booking.numberOfGuests}">

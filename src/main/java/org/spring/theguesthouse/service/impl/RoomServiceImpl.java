@@ -43,7 +43,6 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate, Long excludeBookingId) {
         // Validate that the room exists
-        System.out.println("Called 4-param isRoomAvailable");
         if (!roomRepo.existsById(roomId)) {
             return false;
         }
@@ -61,7 +60,6 @@ public class RoomServiceImpl implements RoomService {
     // Overloaded method with 3 parameters (simpler version)
     @Override
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {
-        System.out.println("Called 3-param isRoomAvailable");
         return isRoomAvailable(roomId, startDate, endDate, null);
     }
 }
