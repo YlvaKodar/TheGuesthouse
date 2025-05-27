@@ -15,8 +15,19 @@
     padding: 5px;
     width: 100px;
   }
-
+  .error {
+    color: red;
+    font-size: 12px;
+    display: block;
+    margin-top: 2px;
+  }
 </style>
+
+<!-- Display error messages if any -->
+<div th:if="${param.error}" class="error">
+  <p th:text="${param.error[0]}"></p>
+</div>
+
 <table>
   <tr>
     <th>ID:</th>
@@ -32,7 +43,7 @@
   </tr>
   <tr>
     <th>Number of guests:</th>
-    <td th:text="${booking.numberOfGuests}">2025-10-15</td>
+    <td th:text="${booking.numberOfGuests}">2</td>
   </tr>
   <tr>
     <th>Start Date:</th>
@@ -51,11 +62,12 @@
 
   <label>End Date:</label><br>
   <input type="date" name="endDate" th:value="${booking.endDate}" required><br><br>
-  <label>Number of Guests:</label><br>
-  <input type="number" name="numberOfGuests" th:value="${numberOfGuests != null ? numberOfGuests : 1}" min="1" max="4" value="1" required><br>
 
+  <label>Number of Guests:</label><br>
+  <input type="number" name="numberOfGuests" th:value="${booking.numberOfGuests}" min="1" max="4" required><br><br>
+
+  <!-- Hidden field for room ID -->
   <input type="hidden" name="roomId" th:value="${booking.room.id}">
-  <input type="hidden" name="numberOfGuests" th:value="${booking.numberOfGuests}">
 
   <button type="submit">Update</button>
 </form>

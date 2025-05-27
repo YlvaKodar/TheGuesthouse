@@ -91,6 +91,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public String addBooking(DetailedBookingDTO booking) {
+        // Validation is now handled in the controller layer
+        // This method just saves the booking
         bookingRepo.save(detailedBookingDtoToBooking(booking));
         return "Booking successfully added";
     }
@@ -115,29 +117,35 @@ public class BookingServiceImpl implements BookingService {
         Long roomIdToCheck = (booking.getRoom() != null) ?
                 booking.getRoom().getId() : existingBooking.getRoom().getId();
 
+        // Get the room
+        Room room = roomRepo.findById(roomIdToCheck)
+                .orElseThrow(() -> new RuntimeException("Room with id " + roomIdToCheck + " not found"));
+
+        if (!roomService.canRoomAccommodateGuests(roomIdToCheck, booking.getNumberOfGuests())) {
+            throw new RuntimeException("Room " + room.getRoomNumber() +
+                    " can only accommodate " + room.getMaxGuests() + " guests, but " + booking.getNumberOfGuests() + " guests were requested");
+        }
+
 
         // Check room availability using RoomService (excluding current booking)
         if (!roomService.isRoomAvailable(roomIdToCheck, booking.getStartDate(),
                 booking.getEndDate(), booking.getId())) {
-            Room room = roomRepo.findById(roomIdToCheck)
-                    .orElseThrow(() -> new RuntimeException("Room with id " + roomIdToCheck + " not found"));
             throw new RuntimeException("Room " + room.getRoomNumber() +
                     " is not available for the selected dates");
         }
 
-        // Update dates (always allowed)
+        // Update booking fields
         existingBooking.setStartDate(booking.getStartDate());
         existingBooking.setEndDate(booking.getEndDate());
+        existingBooking.setNumberOfGuests(booking.getNumberOfGuests());
 
         // Update room only if provided and different
         if (booking.getRoom() != null &&
                 !existingBooking.getRoom().getId().equals(booking.getRoom().getId())) {
-            Room newRoom = roomRepo.findById(booking.getRoom().getId())
-                    .orElseThrow(() -> new RuntimeException("Room with id " + booking.getRoom().getId() + " not found"));
-            existingBooking.setRoom(newRoom);
+            existingBooking.setRoom(room);
         }
 
-        // Customer remains the same - no customer updates allowed
+        // Customer remains the same - no customer updates allowed in bookings
 
         // Save the updated booking
         Booking updatedBooking = bookingRepo.save(existingBooking);

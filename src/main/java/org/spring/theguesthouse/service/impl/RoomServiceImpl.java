@@ -41,6 +41,22 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<RoomDto> getAllAvailableRooms(LocalDate startDate, LocalDate endDate, int numberOfGuests) {
+        return roomRepo.findAll().stream()
+                .filter(room -> room.getMaxGuests() >= numberOfGuests) // Capacity check
+                .filter(room -> isRoomAvailable(room.getId(), startDate, endDate)) // Availability check
+                .map(this::roomToDto)
+                .toList();
+    }
+
+    @Override
+    public boolean canRoomAccommodateGuests(Long roomId, int numberOfGuests) {
+        return roomRepo.findById(roomId)
+                .map(room -> room.getMaxGuests() >= numberOfGuests)
+                .orElse(false);
+    }
+
+    @Override
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate, Long excludeBookingId) {
         // Validate that the room exists
         System.out.println("Called 4-param isRoomAvailable");

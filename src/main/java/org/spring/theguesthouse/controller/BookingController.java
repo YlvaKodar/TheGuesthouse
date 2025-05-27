@@ -56,16 +56,25 @@ public class BookingController {
     public String updateBooking(@PathVariable Long id,
                                 @RequestParam String startDate,
                                 @RequestParam String endDate,
-                                @RequestParam int numberOfGuests) {
+                                @RequestParam int numberOfGuests,
+                                @RequestParam Long roomId) {
+
+        RoomDto room = RoomDto.builder().id(roomId).build();
+
         DetailedBookingDTO updatedBooking = DetailedBookingDTO.builder()
                 .id(id)
                 .startDate(LocalDate.parse(startDate))
                 .endDate(LocalDate.parse(endDate))
                 .numberOfGuests(numberOfGuests)
+                .room(room)
                 .build();
 
-        bookingService.updateBooking(updatedBooking);
-        return "redirect:/bookings/details/" + id;
+        try {
+            bookingService.updateBooking(updatedBooking);
+            return "redirect:/bookings/details/" + id;
+        } catch (RuntimeException e) {
+            return "redirect:/bookings/details/" + id + "?error=" + e.getMessage();
+        }
     }
 
     @RequestMapping(path = "/deleteById/{id}")
@@ -83,9 +92,13 @@ public class BookingController {
     }
 
     @PostMapping("/create/{customerId}/room-availability")
-    public String showRoomAvailability(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, Model model) {
+    public String showRoomAvailability(@PathVariable Long customerId,
+                                       @RequestParam LocalDate startDate,
+                                       @RequestParam LocalDate endDate,
+                                       @RequestParam int numberOfGuests,
+                                       Model model) {
         DetailedCustomerDto customer = customerService.getCustomerById(customerId);
-        List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate);
+        List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate, numberOfGuests);
 
         model.addAttribute("availableRooms", availableRooms);
         model.addAttribute("customer", customer);
@@ -96,20 +109,66 @@ public class BookingController {
     }
 
     @PostMapping("/create/{customerId}")
-    public String createBooking(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, @RequestParam Long roomId, Model model) {
+    public String createBooking(@PathVariable Long customerId,
+                                @RequestParam LocalDate startDate,
+                                @RequestParam LocalDate endDate,
+                                @RequestParam int numberOfGuests,
+                                @RequestParam Long roomId,
+                                Model model) {
 
         if (numberOfGuests < 1 || numberOfGuests > 4) {
             model.addAttribute("error", "Number of guests must be between 1 and 4");
-            return "createBooking";
+            return repopulateCreateBookingForm(customerId, startDate, endDate, numberOfGuests, model);
+        }
+
+        if (!roomService.canRoomAccommodateGuests(roomId, numberOfGuests)) {
+            model.addAttribute("error", "Selected room can't accomodate " + numberOfGuests + " guests");
+            return repopulateCreateBookingForm(customerId, startDate, endDate, numberOfGuests, model);
+        }
+
+        if (!roomService.isRoomAvailable(roomId, startDate, endDate)) {
+            model.addAttribute("error", "Selected room is not available for the chosen dates");
+            return repopulateCreateBookingForm(customerId, startDate, endDate, numberOfGuests, model);
+        }
+
+        if (startDate.isBefore(LocalDate.now())) {
+            model.addAttribute("error", "Start date can't be in the past");
+            return repopulateCreateBookingForm(customerId, startDate, endDate, numberOfGuests, model);
+        }
+
+        if (startDate.isAfter(endDate) || startDate.isEqual(endDate)) {
+            model.addAttribute("error", "Start date must be before end date");
+            return repopulateCreateBookingForm(customerId, startDate, endDate, numberOfGuests, model);
         }
 
         CustomerDto customer = CustomerDto.builder().id(customerId).build();
         RoomDto room = RoomDto.builder().id(roomId).build();
-        DetailedBookingDTO booking = DetailedBookingDTO.builder().startDate(startDate).endDate(endDate).numberOfGuests(numberOfGuests).customer(customer).room(room).build();
+        DetailedBookingDTO booking = DetailedBookingDTO.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .numberOfGuests(numberOfGuests)
+                .customer(customer)
+                .room(room)
+                .build();
 
+        try {
+            bookingService.addBooking(booking);
+            return "redirect:/bookings/all/";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            return repopulateCreateBookingForm(customerId, startDate, endDate, numberOfGuests, model);
+        }
+    }
 
-        bookingService.addBooking(booking);
-        return "redirect:/bookings/all";
+    private String repopulateCreateBookingForm(Long customerId, LocalDate startDate, LocalDate endDate, int numberOfGuests, Model model) {
+        DetailedCustomerDto customer = customerService.getCustomerById(customerId);
+        List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate, numberOfGuests);
+        model.addAttribute("availableRooms", availableRooms);
+        model.addAttribute("customer", customer);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("numberOfGuests", numberOfGuests);
+        model.addAttribute("endDate", endDate);
+        return "createBooking";
     }
 
 }
