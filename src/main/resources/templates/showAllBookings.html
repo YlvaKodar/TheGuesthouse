@@ -30,7 +30,7 @@
     <td th:text="${booking.startDate}">2085-10-02</td>
     <td th:text="${booking.endDate}">2089-04-09</td>
     <td><a th:href="@{/bookings/details/{id}(id=${booking.id})}">Details</a>|
-    <td><a th:href="@{/bookings/deleteById/{id}(id=${booking.id})}">Delete</a></td>
+    <a th:href="@{/bookings/deleteById/{id}(id=${booking.id})}">Delete</a></td>
   </tr>
 
   <!-- Placeholder (if empty list) -->

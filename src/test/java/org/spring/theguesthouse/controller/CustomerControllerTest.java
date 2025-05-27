@@ -1,45 +1,45 @@
-package org.spring.theguesthouse.service.impl;
+package org.spring.theguesthouse.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.spring.theguesthouse.dto.CustomerDto;
-import org.spring.theguesthouse.dto.DetailedBookingDTO;
-import org.spring.theguesthouse.dto.DetailedCustomerDto;
 import org.spring.theguesthouse.entity.Booking;
 import org.spring.theguesthouse.entity.Customer;
 import org.spring.theguesthouse.entity.Room;
 import org.spring.theguesthouse.repository.BookingRepo;
 import org.spring.theguesthouse.repository.CustomerRepo;
 import org.spring.theguesthouse.repository.RoomRepo;
-import org.spring.theguesthouse.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional
 @Rollback
-class CustomerServiceImplTest {
+class CustomerControllerTest {
 
+    @Autowired
+    private MockMvc mockMvc;
     @Autowired
     private CustomerRepo customerRepo;
     @Autowired
     private BookingRepo bookingRepo;
     @Autowired
     private RoomRepo roomRepo;
-    @Autowired
-    private CustomerService customerService;
-
-    private String trueName = "Maja Gräddnos";
-    private String falseName = "Süleyman den Store";
 
     @BeforeEach
     public void setUp() {
@@ -76,50 +76,36 @@ class CustomerServiceImplTest {
         bookingRepo.save(b3);
     }
 
-
     @Test
-    void getAllCustomers() {
-        List<CustomerDto> allCustomers = customerService.getAllCustomers();
-        assertTrue(allCustomers.size() == 3);
-        assertTrue(allCustomers.stream().map(c -> c.getName()).toList().contains(trueName));
-        assertFalse(allCustomers.stream().map(c -> c.getName()).toList().contains(falseName));
+    void showAllCustomers() throws Exception {
+        this.mockMvc.perform(get("/customers/all")).andExpect(status().isOk())
+                .andExpect(model().attributeExists("allCustomers"))
+                .andExpect(view().name("showAllCustomers"));
     }
 
     @Test
-    void detailedCustomerDtoToCustomer() {
-        DetailedCustomerDto dto = DetailedCustomerDto.builder().name("Emma").email("emma@gmail.com").build();
-        Customer customer = customerService.detailedCustomerDtoToCustomer(dto);
-        assertEquals("Emma", customer.getName());
-        assertEquals("emma@gmail.com", customer.getEmail());
-        assertNotNull(customer);
+    void createCustomer() throws Exception {
+        this.mockMvc.perform(post("/customers/create")
+                .param("name", "Kalle Huggorm")
+                .param("email", "Huggorm@Slottsbacken.ua"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/customers/all"));
+
+        this.mockMvc.perform(post("/customers/create")
+                        .param("name", "Kalle Huggorm")
+                        .param("email", "Huggorm@Slottsbacken."))
+                .andExpect(view().name("showAllCustomers"));
     }
 
     @Test
-    void customerToCustomerDto() {
-        Customer c = Customer.builder().name("Emma").email("emma@gmail.com").build();
-        CustomerDto cdto = customerService.customerToCustomerDto(c);
-        assertEquals("Emma", cdto.getName());
-        assertFalse(cdto.getName().equals(trueName));
-        assertNotNull(cdto);
-    }
-
-    @Test
-    void customerToDetailedCustomerDto() {
-    }
-
-    @Test
-    void getCustomerById() {
-    }
-
-    @Test
-    void addCustomer() {
-    }
-
-    @Test
-    void deleteCustomerById() {
+    void showCustomerDetails() {
     }
 
     @Test
     void updateCustomer() {
+    }
+
+    @Test
+    void deleteCustomerById() {
     }
 }
