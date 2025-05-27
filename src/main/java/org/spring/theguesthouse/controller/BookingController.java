@@ -85,18 +85,18 @@ public class BookingController {
     }
 
     @PostMapping("/create/{customerId}/room-availability")
-    public String showRoomAvailability(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, Model model, Errors errors) {
+    public String showRoomAvailability(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, Model model) {
 
         DetailedCustomerDto customer = customerService.getCustomerById(customerId);
 
-        if (customer == null) {
+       if (customer == null) {
             model.addAttribute("error", "Could not get customer id. Please try again");
             return "redirect:/customers/all";
         }
 
         List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate, numberOfGuests);
 
-        if (availableRooms.isEmpty()) {
+      if (availableRooms.isEmpty()) {
             model.addAttribute("error", "There are no available rooms");
             return "redirect:/customers/all";
         }
@@ -112,7 +112,7 @@ public class BookingController {
     }
 
     @PostMapping("/create/{customerId}")
-    public String createBooking(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, @RequestParam Long roomId, Model model, Errors errors) {
+    public String createBooking(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, @RequestParam Long roomId, Model model) {
 
         if (numberOfGuests < 1 || numberOfGuests > 4) {
             model.addAttribute("error", "Number of guests must be between 1 and 4");
