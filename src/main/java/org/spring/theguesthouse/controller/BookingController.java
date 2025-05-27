@@ -107,7 +107,6 @@ public class BookingController {
         RoomDto room = RoomDto.builder().id(roomId).build();
         DetailedBookingDTO booking = DetailedBookingDTO.builder().startDate(startDate).endDate(endDate).numberOfGuests(numberOfGuests).customer(customer).room(room).build();
 
-
         bookingService.addBooking(booking);
         return "redirect:/bookings/all";
     }
