@@ -10,6 +10,7 @@ import org.spring.theguesthouse.service.RoomService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,14 +33,29 @@ public class RoomServiceImpl implements RoomService {
     }
 
     // New, simplified version using the isRoomAvailable method
-
     @Override
     public List<RoomDto> getAllAvailableRooms(LocalDate startDate, LocalDate endDate, int numberOfGuests) {
-        return roomRepo.findAll().stream()
+
+        List<RoomDto> allAvailableRooms = roomRepo.findAll().stream()
                 .filter(room -> room.getMaxGuests() >= numberOfGuests) // Capacity check
                 .filter(room -> isRoomAvailable(room.getId(), startDate, endDate)) // Availability check
                 .map(this::roomToDto)
                 .toList();
+
+        List<RoomDto> sizePrio = new ArrayList<>();
+        //Om möjligt, gör lista med bara rum som passar, i andra hand med lite för stora osv ...
+        for (int targetSize = numberOfGuests; targetSize <= 4; targetSize++) {
+            int finalTargetSize = targetSize;
+            sizePrio = allAvailableRooms.stream()
+                    .filter(r -> r.getMaxGuests() == finalTargetSize)
+                    .toList();
+
+            if (!sizePrio.isEmpty()) {
+                break;
+            }
+        }
+        //Lista med i första hand rätt antal, i andra hand större.
+        return sizePrio;
     }
 
     @Override
