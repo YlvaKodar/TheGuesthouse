@@ -90,11 +90,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Boolean legitName(String name) {
-
         if (name == null || name.trim().isEmpty()) {
             return false;
         }
-
         return name.matches(validName);
     }
 
