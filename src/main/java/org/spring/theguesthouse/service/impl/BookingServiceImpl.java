@@ -49,16 +49,6 @@ public class BookingServiceImpl implements BookingService {
                 .build();
     }
 
-    /*
-
-    @Override
-    public DetailedBookingDTO bookingToDetailedDto(Booking booking) {
-        return DetailedBookingDTO.builder().id(booking.getId())
-                .startDate(booking.getStartDate()).endDate(booking.getEndDate())
-                .customer(new CustomerDto(booking.getCustomer().getId(), booking.getCustomer().getName()))
-                .room(new RoomDto(booking.getRoom().getId(), booking.getRoom().getRoomNumber()))
-                .build();
-    }*/
 
     @Override
     public Booking detailedBookingDtoToBooking(DetailedBookingDTO dto) {
@@ -98,7 +88,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public DetailedBookingDTO updateBooking(DetailedBookingDTO booking) {
+    public void updateBooking(DetailedBookingDTO booking) {
         // Validate input
         Booking existingBooking = bookingRepo.findById(booking.getId()).orElseThrow(() -> new RuntimeException("Booking with id" + booking.getId() + " not found"));
 
@@ -113,9 +103,6 @@ public class BookingServiceImpl implements BookingService {
         existingBooking.setEndDate(booking.getEndDate());
         existingBooking.setNumberOfGuests(booking.getNumberOfGuests());
         existingBooking.setRoom(roomRepo.findById(booking.getRoom().getId()).orElseThrow(() -> new RuntimeException("Room reference is missing")));
-
-        //Vet inte varför du vill göra return
-        return booking;
     }
 
     @Override

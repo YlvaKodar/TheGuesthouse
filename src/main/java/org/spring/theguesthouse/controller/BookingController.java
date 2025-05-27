@@ -58,6 +58,8 @@ public class BookingController {
                                 @RequestParam String endDate,
                                 @RequestParam int numberOfGuests, Model model) {
 
+        DetailedCustomerDto customerDto = customerService.getCustomerById(bookingService.getBookingById(id).getCustomer().getId());
+
 
         DetailedBookingDTO updatedBooking = DetailedBookingDTO.builder()
                 .id(id)
