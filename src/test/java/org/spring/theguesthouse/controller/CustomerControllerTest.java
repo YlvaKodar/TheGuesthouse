@@ -119,10 +119,64 @@ class CustomerControllerTest {
     }
 
     @Test
-    void updateCustomer() {
+    void updateCustomer() throws Exception {
+        // Get an existing customer to update
+        CustomerDto customer = customerService.getAllCustomers()
+                .stream().filter(c -> c.getName().equals(trueName))
+                .findFirst().orElse(null);
+
+        assertNotNull(customer, "Test customer should exist");
+
+        // Test successful update with valid data
+        this.mockMvc.perform(post("/customers/update/" + customer.getId())
+                        .param("name", "Updated Name")                     // Valid name
+                        .param("email", "updated@example.com"))           // Valid email
+                .andExpect(status().is3xxRedirection())           // Redirects after success
+                .andExpect(redirectedUrl("/customers/details/" + customer.getId())); // Back to details
+
+        // Test validation failure with invalid email format
+        this.mockMvc.perform(post("/customers/update/" + customer.getId())
+                        .param("name", "Valid Name")                      // Valid name
+                        .param("email", "invalid-email-format"))          // Invalid email (no @ or domain)
+                .andExpect(view().name("detailedCustomer"))       // Returns to form
+                .andExpect(model().attributeExists("emailError")); // Contains error message
+
+        // Test validation failure with invalid name (too short)
+        this.mockMvc.perform(post("/customers/update/" + customer.getId())
+                        .param("name", "A")                               // Invalid name (too short)
+                        .param("email", "valid@example.com"))             // Valid email
+                .andExpect(view().name("detailedCustomer"))       // Returns to form
+                .andExpect(model().attributeExists("nameError")); // Contains error message
     }
 
     @Test
-    void deleteCustomerById() {
+    void deleteCustomerById() throws Exception {
+        // Test 1: Try to delete customer WITH bookings (should fail)
+        CustomerDto customerWithBookings = customerService.getAllCustomers()
+                .stream().filter(c -> c.getName().equals(trueName))
+                .findFirst().orElse(null);
+
+        assertNotNull(customerWithBookings, "Customer with bookings should exist");
+
+        this.mockMvc.perform(get("/customers/deleteById/" + customerWithBookings.getId()))
+                .andExpect(view().name("showAllCustomers"))       // Returns to customer list
+                .andExpect(model().attributeExists("deleteError")); // Contains error message about bookings
+
+        // Test 2: Delete customer WITHOUT bookings (should succeed)
+        // Create a new customer with no bookings
+        Customer customerNoBookings = Customer.builder()
+                .name("Delete Me")
+                .email("delete@test.com")
+                .build();
+        Customer savedCustomer = customerRepo.save(customerNoBookings);
+
+        // This deletion should succeed
+        this.mockMvc.perform(get("/customers/deleteById/" + savedCustomer.getId()))
+                .andExpect(status().is3xxRedirection())           // Redirects after success
+                .andExpect(redirectedUrl("/customers/all"));    // Back to customer list
+
+        // Verify the customer was actually deleted
+        assertFalse(customerRepo.existsById(savedCustomer.getId()),
+                "Customer should be deleted from database");
     }
 }
