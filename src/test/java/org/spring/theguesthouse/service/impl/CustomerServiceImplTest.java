@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.spring.theguesthouse.dto.CustomerDto;
+import org.spring.theguesthouse.dto.DetailedBookingDTO;
+import org.spring.theguesthouse.dto.DetailedCustomerDto;
 import org.spring.theguesthouse.entity.Booking;
 import org.spring.theguesthouse.entity.Customer;
 import org.spring.theguesthouse.entity.Room;
@@ -85,10 +87,20 @@ class CustomerServiceImplTest {
 
     @Test
     void detailedCustomerDtoToCustomer() {
+        DetailedCustomerDto dto = DetailedCustomerDto.builder().name("Emma").email("emma@gmail.com").build();
+        Customer customer = customerService.detailedCustomerDtoToCustomer(dto);
+        assertEquals("Emma", customer.getName());
+        assertEquals("emma@gmail.com", customer.getEmail());
+        assertNotNull(customer);
     }
 
     @Test
     void customerToCustomerDto() {
+        Customer c = Customer.builder().name("Emma").email("emma@gmail.com").build();
+        CustomerDto cdto = customerService.customerToCustomerDto(c);
+        assertEquals("Emma", cdto.getName());
+        assertFalse(cdto.getName().equals(trueName));
+        assertNotNull(cdto);
     }
 
     @Test
