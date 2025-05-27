@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HomeController {
 
-   @RequestMapping("/Startpage")
+   @RequestMapping("/startpage")
     public String start(Model model) {
         return "Startpage";
     }
