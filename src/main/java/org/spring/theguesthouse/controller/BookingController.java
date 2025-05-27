@@ -68,8 +68,14 @@ public class BookingController {
                                 @RequestParam int numberOfGuests, Model model) {
 
         DetailedCustomerDto customerDto = customerService.getCustomerById(bookingService.getBookingById(id).getCustomer().getId());
+        CustomerDto cdto = CustomerDto.builder().id(customerDto.getId()).name(customerDto.getName()).build();
+
 
         System.out.println("Customers bookingID: " + id);
+
+        System.out.println( "Exsisting: " +
+                bookingService.getBookingById(id).toString()
+        );
 
         if (customerDto == null) {
             model.addAttribute("error", "Could not get customer id. Please try again");
@@ -94,10 +100,12 @@ public class BookingController {
         DetailedBookingDTO updatedBookingDto = DetailedBookingDTO.builder()
             .id(id)
             .startDate(startDate)
-            .endDate(endDate)
+            .endDate(endDate).customer(cdto)
             .numberOfGuests(numberOfGuests)
             .room(roomService.getRoomById(newRoomId))
             .build();
+
+        System.out.println("New booking: " + updatedBookingDto.toString());
 
         bookingService.updateBooking(updatedBookingDto);
         return "redirect:/bookings/details/" + id;

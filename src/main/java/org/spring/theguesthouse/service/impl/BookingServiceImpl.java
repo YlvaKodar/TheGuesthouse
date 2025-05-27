@@ -114,6 +114,8 @@ public class BookingServiceImpl implements BookingService {
         existingBooking.setNumberOfGuests(booking.getNumberOfGuests());
         existingBooking.setRoom(roomRepo.findById(booking.getRoom().getId()).orElseThrow(() -> new RuntimeException("Room reference is missing")));
 
+        bookingRepo.save(existingBooking);
+
         //Vet inte varför du vill göra return
         return booking;
     }
