@@ -12,8 +12,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HomeController {
 
-   // @RequestMapping("/home")
+   @RequestMapping("/Startpage")
     public String start(Model model) {
-        return "home";
+        return "Startpage";
     }
 }

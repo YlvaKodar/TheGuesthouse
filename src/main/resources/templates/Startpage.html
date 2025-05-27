@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Startsida</title>
+
+  <style>
+    table {
+      border-collapse: collapse;
+      width: auto;
+    }
+    th, td {
+      text-align: left;
+      padding: 5px;
+      width: 100px; /* Fast bredd för alla kolumner */
+    }
+  </style>
+
+</head>
+<body>
+<h2 th:text="Startpage"></h2>
+
+<td><a th:href="@{/bookings/all}">Bookings</a> |</td>
+<td><a th:href="@{/customers/all}">Customer</a></td>
+
+</body>
+</html>
