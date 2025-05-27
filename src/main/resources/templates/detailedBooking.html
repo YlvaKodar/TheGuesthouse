@@ -5,6 +5,69 @@
 </head>
 <body>
 <h2>Booking Details</h2>
+
+<h4>Update Booking</h4>
+<p>Booking ID: <span th:text="${booking.id}"></span></p>
+<p>Current Room: <span th:text="'Room ' + ${booking.room.roomNumber}"></span></p>
+
+<!-- Formulär för att välja nya datum och gäster -->
+<form th:action="@{/bookings/create/{bookingId}/room-availability-update(bookingId=${booking.id})}" method="post">
+  <label for="startDate">Start Date:</label>
+  <input type="date" name="startDate" th:value="${startDate}" required>
+
+  <label for="endDate">End Date:</label>
+  <input type="date" name="endDate" th:value="${endDate}" required>
+
+  <label for="numberOfGuests">Number of Guests:</label>
+  <input type="number" name="numberOfGuests" th:value="${numberOfGuests}" required>
+
+  <button type="submit">Check Availability</button>
+</form>
+
+<div th:if="${availableRooms != null}">
+  <h4>Available Rooms</h4>
+  <form th:action="@{/bookings/update/{id}(id=${booking.id})}" method="post">
+    <input type="hidden" name="startDate" th:value="${startDate}">
+    <input type="hidden" name="endDate" th:value="${endDate}">
+    <input type="hidden" name="numberOfGuests" th:value="${numberOfGuests}">
+
+    <table border="1">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Room Number</th>
+        <th>Max Guests</th>
+        <th>Select</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="room : ${availableRooms}">
+        <td th:text="${room.id}"></td>
+        <td th:text="${room.roomNumber}"></td>
+        <td th:text="${room.maxGuests}"></td>
+        <td><input type="radio" name="newRoomId" th:value="${room.id}" required></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <br>
+    <button type="submit">Update Booking</button>
+  </form>
+</div>
+
+<br>
+<a href="/bookings/details/{id}" th:text="'Back to Booking Details'">Back to Booking Details</a>
+</body>
+</html>
+
+
+<!--<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Booking Details</title>
+</head>
+<body>
+<h2>Booking Details</h2>
 <style>
   table {
     border-collapse: collapse;
@@ -85,78 +148,5 @@
 </div>
 <br>
 <a href="/customers/all">Back to Customer List</a>
-</body>
-</html>
-<!--<table>
-  <tr>
-    <th>ID:</th>
-    <td th:text="${booking.id}">1</td>
-  </tr>
-  <tr>
-    <th>Customer:</th>
-    <td th:text="${booking.customer.name}">John Doe</td>
-  </tr>
-  <tr>
-    <th>Room:</th>
-    <td th:text="'Room ' + ${booking.room.roomNumber}">Room 101</td>
-  </tr>
-  <tr>
-    <th>Number of guests:</th>
-    <td th:text="${booking.numberOfGuests}">2025-10-15</td>
-  </tr>
-  <tr>
-    <th>Start Date:</th>
-    <td th:text="${booking.startDate}">2025-10-15</td>
-  </tr>
-  <tr>
-    <th>End Date:</th>
-    <td th:text="${booking.endDate}">2025-10-18</td>
-  </tr>
-</table>
-
-<h3>Update Booking</h3>
-<form th:action="@{/bookings/update/{id}(id=${booking.id})}" method="post">
-  <div th:include="bookingForm"></div>
-
-  <input type="hidden" name="roomId" th:value="${booking.room.id}">
-  <input type="hidden" name="numberOfGuests" th:value="${booking.numberOfGuests}">
-
-  <button type="submit">Update</button>
-</form>
-<div th:if="${availableRooms != null}">
-  <h4>Available Rooms (<span th:text="${#lists.size(availableRooms)}"></span>)</h4>
-  <h4>Available Rooms</h4>
-  <form th:action="@{/bookings/update/{id}(id=${customer.id})}" method="post">
-
-    <input type="hidden" name="startDate" th:value="${startDate}">
-    <input type="hidden" name="endDate" th:value="${endDate}">
-    <input type="hidden" name="numberOfGuests" th:value="${numberOfGuests}">
-
-    <table border="1">
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Room Number</th>
-        <th>Max Guests</th>
-        <th>Select</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="room : ${availableRooms}">
-        <td th:text="${room.id}"></td>
-        <td th:text="${room.roomNumber}"></td>
-        <td th:text="${room.maxGuests}"></td>
-        <td><input type="radio" name="roomId" th:value="${room.id}" required></td>
-      </tr>
-      </tbody>
-    </table>
-
-    <br>
-    <button type="submit">Create Booking</button>
-  </form>
-</div>
-<br>
-<a href="/bookings/all">Back to Booking List</a>
-
 </body>
 </html>-->
