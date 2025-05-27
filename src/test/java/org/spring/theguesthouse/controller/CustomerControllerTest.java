@@ -2,12 +2,15 @@ package org.spring.theguesthouse.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.spring.theguesthouse.dto.CustomerDto;
 import org.spring.theguesthouse.entity.Booking;
 import org.spring.theguesthouse.entity.Customer;
 import org.spring.theguesthouse.entity.Room;
 import org.spring.theguesthouse.repository.BookingRepo;
 import org.spring.theguesthouse.repository.CustomerRepo;
 import org.spring.theguesthouse.repository.RoomRepo;
+import org.spring.theguesthouse.service.CustomerService;
+import org.spring.theguesthouse.service.impl.CustomerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +43,11 @@ class CustomerControllerTest {
     private BookingRepo bookingRepo;
     @Autowired
     private RoomRepo roomRepo;
+    @Autowired
+    private CustomerService customerService;
+
+    private String trueName = "Maja Gräddnos";
+    private String falseName = "Süleyman den Store";
 
     @BeforeEach
     public void setUp() {
@@ -51,7 +59,7 @@ class CustomerControllerTest {
         roomRepo.save(r2);
         roomRepo.save(r3);
 
-        Customer c1 = Customer.builder().name("Maja Gräddnos").email("maja@asgrand.ua").build();
+        Customer c1 = Customer.builder().name(trueName).email("maja@asgrand.ua").build();
         Customer c2 = Customer.builder().name("Gammel-Maja").email("maja@domkyrkotornet.ua").build();
         Customer c3 = Customer.builder().name("Gullan von Arkadien").email("gullan@arkadien.ua").build();
 
@@ -98,7 +106,16 @@ class CustomerControllerTest {
     }
 
     @Test
-    void showCustomerDetails() {
+    void showCustomerDetails() throws Exception {
+        CustomerDto customer = customerService.getAllCustomers()
+                .stream().filter(c -> c.getName().equals(trueName))
+                .findFirst().orElse(null);
+
+        assertNotNull(customer);
+        this.mockMvc.perform(get("/customers/details/" + customer.getId()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("customer"))
+                .andExpect(view().name("detailedCustomer"));
     }
 
     @Test
