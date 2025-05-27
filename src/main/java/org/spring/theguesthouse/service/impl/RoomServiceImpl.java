@@ -45,9 +45,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate, Long excludeBookingId) {
         // Validate that the room exists
-        if (!roomRepo.existsById(roomId)) {
-            return false;
-        }
+        //Booking existingBooking = bookingRepo.findById(booking.getId()).orElseThrow(() -> new RuntimeException("Booking with id" + booking.getId() + " not found"));
 
         // Check if the room has any conflicting bookings
         return bookingRepo.findAll().stream()
