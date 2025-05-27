@@ -11,7 +11,7 @@ public interface RoomService {
 
     public RoomDto roomToDto(Room r);
     public List<RoomDto> getAllRooms();
-    public List<RoomDto> getAllAvailableRooms(LocalDate startDate, LocalDate endDate);
+    public List<RoomDto> getAllAvailableRooms(LocalDate startDate, LocalDate endDate, int numberOfGuests);
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate, Long excludeBookingId);
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate);
 }

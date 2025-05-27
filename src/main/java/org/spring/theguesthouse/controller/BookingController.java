@@ -14,6 +14,7 @@ import org.spring.theguesthouse.service.impl.CustomerServiceImpl;
 import org.spring.theguesthouse.service.impl.RoomServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,9 +84,11 @@ public class BookingController {
     }
 
     @PostMapping("/create/{customerId}/room-availability")
-    public String showRoomAvailability(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, Model model) {
+    public String showRoomAvailability(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, Model model, Errors errors) {
         DetailedCustomerDto customer = customerService.getCustomerById(customerId);
-        List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate);
+        List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate, numberOfGuests);
+
+
 
         model.addAttribute("availableRooms", availableRooms);
         model.addAttribute("customer", customer);
@@ -96,11 +99,16 @@ public class BookingController {
     }
 
     @PostMapping("/create/{customerId}")
-    public String createBooking(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, @RequestParam Long roomId, Model model) {
+    public String createBooking(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, @RequestParam Long roomId, Model model, Errors errors) {
 
         if (numberOfGuests < 1 || numberOfGuests > 4) {
             model.addAttribute("error", "Number of guests must be between 1 and 4");
             return "createBooking";
+        }
+        List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate, numberOfGuests);
+        if(availableRooms.isEmpty()) {
+            model.addAttribute(error, "No rooms available");
+            return "redirect:/bookings/all";
         }
 
         CustomerDto customer = CustomerDto.builder().id(customerId).build();

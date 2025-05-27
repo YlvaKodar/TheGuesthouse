@@ -32,10 +32,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     // New, simplified version using the isRoomAvailable method
+
     @Override
-    public List<RoomDto> getAllAvailableRooms(LocalDate startDate, LocalDate endDate) {
+    public List<RoomDto> getAllAvailableRooms(LocalDate startDate, LocalDate endDate, int numberOfGuests) {
         return roomRepo.findAll().stream()
-                .filter(room -> isRoomAvailable(room.getId(), startDate, endDate))
+                .filter(room -> room.getMaxGuests() >= numberOfGuests) // Capacity check
+                .filter(room -> isRoomAvailable(room.getId(), startDate, endDate)) // Availability check
                 .map(this::roomToDto)
                 .toList();
     }
