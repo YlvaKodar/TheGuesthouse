@@ -137,8 +137,6 @@ public class BookingServiceImpl implements BookingService {
             existingBooking.setRoom(newRoom);
         }
 
-        // Customer remains the same - no customer updates allowed
-
         // Save the updated booking
         Booking updatedBooking = bookingRepo.save(existingBooking);
 
