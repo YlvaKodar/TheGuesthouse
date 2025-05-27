@@ -59,46 +59,8 @@ public class BookingController {
         return "detailedBooking";
     }
 
+
     @PostMapping("/update/{id}")
-    public String updateBooking(@PathVariable Long id,
-                                @RequestParam LocalDate startDate,
-                                @RequestParam LocalDate endDate,
-                                @RequestParam Long newRoomId,
-                                @RequestParam int numberOfGuests, Model model) {
-
-        // Hämta bokningen
-        DetailedBookingDTO booking = bookingService.getBookingById(id);
-        if (booking == null) {
-            model.addAttribute("error", "Booking not found");
-            return "redirect:/customers/all";
-        }
-
-        // Hämta den valda rumsinformationen
-        RoomDto newRoom = roomService.getRoomById(newRoomId);
-        if (newRoom == null) {
-            model.addAttribute("error", "Room not found");
-            return "redirect:/bookings/details/" + id;
-        }
-
-        // Uppdatera bokningen med nya datum och rum
-        DetailedBookingDTO updatedBookingDto = DetailedBookingDTO.builder()
-                .id(id)
-                .startDate(startDate)
-                .endDate(endDate)
-                .numberOfGuests(numberOfGuests)
-                .room(newRoom)  // Använd det valda rummet
-                .build();
-
-        // Spara den uppdaterade bokningen
-        bookingService.updateBooking(updatedBookingDto);
-
-        return "redirect:/bookings/details/" + id; // Ompekning till bokningsdetaljer
-    }
-
-
-    //ÄR DET HÄR VI ÄR NÄR VI KOMMER FRÅN DETAILED BOOKING TILL UPDATE? DÅ VILL VI JU HA IN FLER VÄRDEN,
-    //LÄMPLIGTVIS HELA BOOKING-DTO
-    /*@PostMapping("/update/{id}")
     public String updateBooking(@PathVariable Long id,
                                 @RequestParam LocalDate startDate,
                                 @RequestParam LocalDate endDate,
@@ -139,7 +101,7 @@ public class BookingController {
 
         bookingService.updateBooking(updatedBookingDto);
         return "redirect:/bookings/details/" + id;
-    }*/
+    }
 
     @GetMapping("/create/{bookingId}/room-availability-update")
     public String showRoomAvailabilityUpdateGet(
@@ -158,42 +120,9 @@ public class BookingController {
         return "detailedBooking";
     }
 
-    @PostMapping("/create/{bookingId}/room-availability-update")
-    public String handleAvailabilityForm(@PathVariable Long bookingId,
-                                         @RequestParam LocalDate startDate,
-                                         @RequestParam LocalDate endDate,
-                                         @RequestParam int numberOfGuests,
-                                         Model model) {
-
-        // Hämta bokningen
-        DetailedBookingDTO booking = bookingService.getBookingById(bookingId);
-        if (booking == null) {
-            model.addAttribute("error", "Booking not found");
-            return "redirect:/customers/all";
-        }
-
-        // Hämta tillgängliga rum baserat på de nya datumen och gästerna
-        List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate, numberOfGuests);
-
-        // Om det inte finns några tillgängliga rum
-        if (availableRooms.isEmpty()) {
-            model.addAttribute("error", "No available rooms for the selected dates.");
-            return "redirect:/bookings/details/" + bookingId; // Tillbaka till bokningsdetaljer
-        }
-
-        // Lägg till nödvändig information till modellen
-        model.addAttribute("booking", booking);
-        model.addAttribute("startDate", startDate);
-        model.addAttribute("endDate", endDate);
-        model.addAttribute("numberOfGuests", numberOfGuests);
-        model.addAttribute("availableRooms", availableRooms);
-
-        return "detailedBooking"; // Till vyn där användaren kan välja ett rum
-    }
 
 
-
-   /* @PostMapping("/create/{bookingId}/room-availability-update")
+   @PostMapping("/create/{bookingId}/room-availability-update")
     public String showRoomAvailabilityUpdate(@PathVariable Long bookingId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, Model model) {
 
         DetailedBookingDTO booking = bookingService.getBookingById(bookingId);
@@ -226,7 +155,7 @@ public class BookingController {
         model.addAttribute("booking", booking);
 
         return "detailedBooking";
-    }*/
+    }
 
     @RequestMapping(path = "/deleteById/{id}")
     public String deleteBookingById(@PathVariable Long id, Model model) {

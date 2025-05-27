@@ -5,69 +5,6 @@
 </head>
 <body>
 <h2>Booking Details</h2>
-
-<h4>Update Booking</h4>
-<p>Booking ID: <span th:text="${booking.id}"></span></p>
-<p>Current Room: <span th:text="'Room ' + ${booking.room.roomNumber}"></span></p>
-
-<!-- Formulär för att välja nya datum och gäster -->
-<form th:action="@{/bookings/create/{bookingId}/room-availability-update(bookingId=${booking.id})}" method="post">
-  <label for="startDate">Start Date:</label>
-  <input type="date" name="startDate" th:value="${startDate}" required>
-
-  <label for="endDate">End Date:</label>
-  <input type="date" name="endDate" th:value="${endDate}" required>
-
-  <label for="numberOfGuests">Number of Guests:</label>
-  <input type="number" name="numberOfGuests" th:value="${numberOfGuests}" required>
-
-  <button type="submit">Check Availability</button>
-</form>
-
-<div th:if="${availableRooms != null}">
-  <h4>Available Rooms</h4>
-  <form th:action="@{/bookings/update/{id}(id=${booking.id})}" method="post">
-    <input type="hidden" name="startDate" th:value="${startDate}">
-    <input type="hidden" name="endDate" th:value="${endDate}">
-    <input type="hidden" name="numberOfGuests" th:value="${numberOfGuests}">
-
-    <table border="1">
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Room Number</th>
-        <th>Max Guests</th>
-        <th>Select</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="room : ${availableRooms}">
-        <td th:text="${room.id}"></td>
-        <td th:text="${room.roomNumber}"></td>
-        <td th:text="${room.maxGuests}"></td>
-        <td><input type="radio" name="newRoomId" th:value="${room.id}" required></td>
-      </tr>
-      </tbody>
-    </table>
-
-    <br>
-    <button type="submit">Update Booking</button>
-  </form>
-</div>
-
-<br>
-<a href="/bookings/details/{id}" th:text="'Back to Booking Details'">Back to Booking Details</a>
-</body>
-</html>
-
-
-<!--<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-  <title>Booking Details</title>
-</head>
-<body>
-<h2>Booking Details</h2>
 <style>
   table {
     border-collapse: collapse;
@@ -149,4 +86,4 @@
 <br>
 <a href="/customers/all">Back to Customer List</a>
 </body>
-</html>-->
+</html>
