@@ -6,12 +6,14 @@ import org.spring.theguesthouse.dto.BookingDTO;
 import org.spring.theguesthouse.dto.CustomerDto;
 import org.spring.theguesthouse.dto.DetailedBookingDTO;
 import org.spring.theguesthouse.dto.DetailedCustomerDto;
+import org.spring.theguesthouse.entity.Room;
 import org.spring.theguesthouse.service.BookingService;
 import org.spring.theguesthouse.service.CustomerService;
 import org.spring.theguesthouse.service.RoomService;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebAutoConfiguration;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,7 @@ public class BookingController {
     private final BookingService bookingService;
     private final CustomerService customerService;
     private final RoomService roomService;
+    private final SpringDataWebAutoConfiguration springDataWebAutoConfiguration;
 
 
     //localhost:8080/bookings/all
@@ -46,6 +49,12 @@ public class BookingController {
     @GetMapping("/details/{id}")
     public String showBookingDetails(@PathVariable Long id, Model model) {
         DetailedBookingDTO booking = bookingService.getBookingById(id);
+
+        if (booking == null) {
+            model.addAttribute("error", "Booking not found.");
+            return "errorPage";  // or redirect somewhere appropriate
+
+        }
         model.addAttribute("booking", booking);
         return "detailedBooking";
     }
@@ -54,20 +63,97 @@ public class BookingController {
     //LÄMPLIGTVIS HELA BOOKING-DTO
     @PostMapping("/update/{id}")
     public String updateBooking(@PathVariable Long id,
-                                @RequestParam String startDate,
-                                @RequestParam String endDate,
+                                @RequestParam LocalDate startDate,
+                                @RequestParam LocalDate endDate,
+                                @RequestParam Long newRoomId,
                                 @RequestParam int numberOfGuests, Model model) {
 
+        DetailedCustomerDto customerDto = customerService.getCustomerById(bookingService.getBookingById(id).getCustomer().getId());
 
-        DetailedBookingDTO updatedBooking = DetailedBookingDTO.builder()
-                .id(id)
-                .startDate(LocalDate.parse(startDate))
-                .endDate(LocalDate.parse(endDate))
-                .numberOfGuests(numberOfGuests)
-                .build();
+        System.out.println("Customers bookingID: " + id);
 
-        bookingService.updateBooking(updatedBooking);
+        if (customerDto == null) {
+            model.addAttribute("error", "Could not get customer id. Please try again");
+            return "redirect:/customers/all";
+        }
+
+        List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate, numberOfGuests);
+
+        if (availableRooms.isEmpty()) {
+            model.addAttribute("error", "There are no available rooms");
+            return "redirect:/customers/all";
+        }
+
+        model.addAttribute("availableRooms", availableRooms);
+        model.addAttribute("customer", customerDto);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("numberOfGuests", numberOfGuests);
+        model.addAttribute("endDate", endDate);
+
+        System.out.println("Customers roomID " + newRoomId);
+
+        DetailedBookingDTO updatedBookingDto = DetailedBookingDTO.builder()
+            .id(id)
+            .startDate(startDate)
+            .endDate(endDate)
+            .numberOfGuests(numberOfGuests)
+            .room(roomService.getRoomById(newRoomId))
+            .build();
+
+        bookingService.updateBooking(updatedBookingDto);
         return "redirect:/bookings/details/" + id;
+    }
+
+    @GetMapping("/create/{bookingId}/room-availability-update")
+    public String showRoomAvailabilityUpdateGet(
+            @PathVariable Long bookingId,
+            Model model) {
+
+        DetailedBookingDTO booking = bookingService.getBookingById(bookingId);
+        if (booking == null) {
+            model.addAttribute("error", "Booking not found");
+            return "redirect:/customers/all";
+        }
+
+        model.addAttribute("booking", booking);
+        // You can optionally set defaults for startDate, endDate, numberOfGuests if you want.
+
+        return "detailedBooking";
+    }
+
+    @PostMapping("/create/{bookingId}/room-availability-update")
+    public String showRoomAvailabilityUpdate(@PathVariable Long bookingId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, Model model) {
+
+        DetailedBookingDTO booking = bookingService.getBookingById(bookingId);
+        if (booking == null) {
+            model.addAttribute("error", "Booking not found");
+            return "redirect:/customers/all";
+        }
+
+        DetailedCustomerDto customerDto = customerService.getCustomerById(bookingService.getBookingById(bookingId).getCustomer().getId());
+
+
+        if (customerDto == null) {
+            model.addAttribute("error", "Could not get customer id. Please try again");
+            return "redirect:/customers/all";
+        }
+
+        List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate, numberOfGuests);
+
+        if (availableRooms.isEmpty()) {
+            model.addAttribute("error", "There are no available rooms");
+            return "redirect:/customers/all";
+        }
+
+
+        model.addAttribute("availableRooms", availableRooms);
+        model.addAttribute("customer", customerDto);
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("numberOfGuests", numberOfGuests);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("booking", booking);
+
+        return "detailedBooking";
     }
 
     @RequestMapping(path = "/deleteById/{id}")

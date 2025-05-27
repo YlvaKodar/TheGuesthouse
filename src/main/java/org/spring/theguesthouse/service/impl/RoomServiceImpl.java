@@ -31,6 +31,7 @@ public class RoomServiceImpl implements RoomService {
         return roomRepo.findAll().stream().map(this::roomToDto).toList();
     }
 
+
     // New, simplified version using the isRoomAvailable method
 
     @Override
@@ -61,5 +62,10 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate) {
         return isRoomAvailable(roomId, startDate, endDate, null);
+    }
+
+    @Override
+    public RoomDto getRoomById(Long roomId) {
+        return roomRepo.findById(roomId).map(this::roomToDto).orElse(null);
     }
 }
