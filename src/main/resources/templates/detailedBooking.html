@@ -15,7 +15,14 @@
     padding: 5px;
     width: 100px;
   }
-
+  .error {
+    color: red;
+    background-color: #ffe6e6;
+    border: 1px solid red;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+  }
 </style>
 <table>
   <tr>
@@ -43,6 +50,11 @@
     <td th:text="${booking.endDate}">2025-10-18</td>
   </tr>
 </table>
+
+<!-- Error message display -->
+<div th:if="${error}" class="error">
+  <strong>Error:</strong> <span th:text="${error}"></span>
+</div>
 
 <h3>Update Booking</h3>
 <form th:action="@{/bookings/update/{id}(id=${booking.id})}" method="post">

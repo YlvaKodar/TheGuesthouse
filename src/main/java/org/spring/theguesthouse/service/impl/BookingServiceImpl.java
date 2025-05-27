@@ -102,20 +102,36 @@ public class BookingServiceImpl implements BookingService {
         // Validate input
         Booking existingBooking = bookingRepo.findById(booking.getId()).orElseThrow(() -> new RuntimeException("Booking with id" + booking.getId() + " not found"));
 
-        //DESSA ÄR ANTINGEN DUBBELJOBB ELLER EXTRA SÄKERHETSBÄLTE
         // Validate dates
         if(!(checkDates(booking.getStartDate()) || checkDateOrder(booking.getStartDate(), booking.getEndDate()))) {
             throw new RuntimeException("Booking dates are wrong.");
+        }
+
+        // Validate room capacity - check against existing room if no new room provided
+        Room roomToCheck = existingBooking.getRoom();
+        if (booking.getRoom() != null && booking.getRoom().getId() != null) {
+            roomToCheck = roomRepo.findById(booking.getRoom().getId()).orElseThrow(() -> new RuntimeException("Room reference is missing"));
+        }
+
+        if (booking.getNumberOfGuests() > roomToCheck.getMaxGuests()) {
+            throw new RuntimeException("Number of guests (" + booking.getNumberOfGuests() +
+                    ") exceeds room capacity (" + roomToCheck.getMaxGuests() + ")");
         }
 
         // Save the updated booking info
         existingBooking.setStartDate(booking.getStartDate());
         existingBooking.setEndDate(booking.getEndDate());
         existingBooking.setNumberOfGuests(booking.getNumberOfGuests());
-        existingBooking.setRoom(roomRepo.findById(booking.getRoom().getId()).orElseThrow(() -> new RuntimeException("Room reference is missing")));
 
-        //Vet inte varför du vill göra return
-        return booking;
+        // Only update room if room information is provided
+        if (booking.getRoom() != null && booking.getRoom().getId() != null) {
+            existingBooking.setRoom(roomToCheck); // Use the already validated room
+        }
+
+        // Actually save the updated booking
+        Booking savedBooking = bookingRepo.save(existingBooking);
+
+        return bookingToDetailedDto(savedBooking);
     }
 
     @Override

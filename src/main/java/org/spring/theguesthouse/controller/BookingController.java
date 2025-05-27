@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -56,18 +57,24 @@ public class BookingController {
     public String updateBooking(@PathVariable Long id,
                                 @RequestParam String startDate,
                                 @RequestParam String endDate,
-                                @RequestParam int numberOfGuests, Model model) {
+                                @RequestParam int numberOfGuests,
+                                RedirectAttributes redirectAttributes) {
 
+        try {
+            DetailedBookingDTO updatedBooking = DetailedBookingDTO.builder()
+                    .id(id)
+                    .startDate(LocalDate.parse(startDate))
+                    .endDate(LocalDate.parse(endDate))
+                    .numberOfGuests(numberOfGuests)
+                    .build();
 
-        DetailedBookingDTO updatedBooking = DetailedBookingDTO.builder()
-                .id(id)
-                .startDate(LocalDate.parse(startDate))
-                .endDate(LocalDate.parse(endDate))
-                .numberOfGuests(numberOfGuests)
-                .build();
+            bookingService.updateBooking(updatedBooking);
+            return "redirect:/bookings/details/" + id;
 
-        bookingService.updateBooking(updatedBooking);
-        return "redirect:/bookings/details/" + id;
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/bookings/details/" + id;
+        }
     }
 
     @RequestMapping(path = "/deleteById/{id}")
@@ -135,6 +142,11 @@ public class BookingController {
 
         bookingService.addBooking(booking);
         return "redirect:/bookings/all";
+    }
+    @GetMapping("/test-flash/{id}")
+    public String testFlash(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("error", "TEST ERROR MESSAGE");
+        return "redirect:/bookings/details/" + id;
     }
 
 }
