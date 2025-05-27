@@ -5,6 +5,7 @@ import org.spring.theguesthouse.dto.DeleteResponseDto;
 import org.spring.theguesthouse.entity.Booking;
 import org.spring.theguesthouse.dto.DetailedBookingDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface BookingService {
@@ -17,4 +18,6 @@ public interface BookingService {
     List<BookingDTO> getAllBookingDtos();
     List<DetailedBookingDTO> getAllDetailedBookingDtos();
     DeleteResponseDto deleteBooking(Long Id);
+    Boolean checkDateOrder(LocalDate start, LocalDate end);
+    Boolean checkDates(LocalDate startDate);
 }

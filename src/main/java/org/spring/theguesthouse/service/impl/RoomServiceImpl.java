@@ -32,10 +32,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     // New, simplified version using the isRoomAvailable method
+
     @Override
-    public List<RoomDto> getAllAvailableRooms(LocalDate startDate, LocalDate endDate) {
+    public List<RoomDto> getAllAvailableRooms(LocalDate startDate, LocalDate endDate, int numberOfGuests) {
         return roomRepo.findAll().stream()
-                .filter(room -> isRoomAvailable(room.getId(), startDate, endDate))
+                .filter(room -> room.getMaxGuests() >= numberOfGuests) // Capacity check
+                .filter(room -> isRoomAvailable(room.getId(), startDate, endDate)) // Availability check
                 .map(this::roomToDto)
                 .toList();
     }
@@ -43,14 +45,12 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public boolean isRoomAvailable(Long roomId, LocalDate startDate, LocalDate endDate, Long excludeBookingId) {
         // Validate that the room exists
-        if (!roomRepo.existsById(roomId)) {
-            return false;
-        }
+        //Booking existingBooking = bookingRepo.findById(booking.getId()).orElseThrow(() -> new RuntimeException("Booking with id" + booking.getId() + " not found"));
 
         // Check if the room has any conflicting bookings
         return bookingRepo.findAll().stream()
                 .filter(booking -> booking.getRoom().getId().equals(roomId))
-                .filter(booking -> excludeBookingId == null || !booking.getId().equals(excludeBookingId))
+                .filter(booking -> !booking.getId().equals(excludeBookingId))
                 .noneMatch(booking -> {
                     // Check if the date ranges overlap
                     return !endDate.isBefore(booking.getStartDate()) && !startDate.isAfter(booking.getEndDate());
