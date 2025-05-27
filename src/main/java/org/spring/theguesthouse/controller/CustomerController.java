@@ -2,11 +2,13 @@ package org.spring.theguesthouse.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.spring.theguesthouse.dto.CustomerDto;
+import org.spring.theguesthouse.dto.DeleteResponseDto;
 import org.spring.theguesthouse.dto.DetailedCustomerDto;
 import org.spring.theguesthouse.service.CustomerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -82,8 +84,16 @@ public class CustomerController {
     }
 
     @RequestMapping(path = "/deleteById/{id}")
-    public String deleteCustomerById(@PathVariable Long id, Model model) {
-        customerService.deleteCustomerById(id);
+    public String deleteCustomerById(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+
+        DeleteResponseDto customer = customerService.deleteCustomerById(id);
+
+        if(!customer.isSuccess()){
+            model.addAttribute("deleteError", customer.getMessage());
+            return showAllCustomers(model);
+        }
+
+        redirectAttributes.addFlashAttribute("deleteConfirmation", customer.getMessage());
         return "redirect:/customers/all";
     }
 }

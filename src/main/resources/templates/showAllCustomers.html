@@ -22,12 +22,20 @@
             display: block;
             margin-top: 2px;
         }
+        .confirmation {
+            color: green;
+            font-size: 12px;
+            display: block;
+            margin-top: 2px;
+        }
     </style>
 </head>
 <body>
 <h2 th:text="${customerTitle}"></h2>
 
 <table>
+    <span th:if="${deleteError}" th:text="${deleteError}" class="error"></span>
+    <span th:if="${deleteConfirmation}" th:text="${deleteConfirmation}" class="confirmation"></span>
     <tr><th th:text="${id}"></th>
         <th th:text="${name}"></th>
     <tr th:each="customer : ${allCustomers}">
