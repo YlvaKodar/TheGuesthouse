@@ -15,6 +15,12 @@
     padding: 5px;
     width: 100px;
   }
+  .error {
+    color: red;
+    font-size: 12px;
+    display: block;
+    margin-top: 2px;
+  }
 
 </style>
 <table>
@@ -44,6 +50,7 @@
   </tr>
 </table>
 <h3>Update Booking</h3>
+<span th:if="${error}" th:text="${error}" class="error"></span>
 <h4>Select Dates</h4>
 <p>Booking ID: <span th:text="${booking.id}">[Missing]</span></p>
 
@@ -84,6 +91,6 @@
   </form>
 </div>
 <br>
-<a href="/customers/all">Back to Customer List</a>
+<a href="/bookings/all">Back to bookings</a>
 </body>
 </html>
