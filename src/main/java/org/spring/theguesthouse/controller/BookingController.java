@@ -66,22 +66,6 @@ public class BookingController {
                                 @RequestParam int numberOfGuests, Model model) {
 
 
-        if (numberOfGuests < 1 || numberOfGuests > 4) {
-            model.addAttribute("error", "Number of guests must be between 1 and 4");
-            return showBookingDetails(bookingId, model);
-        }
-
-        if (!bookingService.checkDates(startDate)){
-            model.addAttribute("error", "Please check that entered dates are in the uncertain future and not the unreachable passed.");
-            return showBookingDetails(bookingId, model);
-        }
-
-        if(!bookingService.checkDateOrder(startDate, endDate)) {
-            model.addAttribute("error", "Start date must come before end date");
-            return showBookingDetails(bookingId, model);
-        }
-
-
         DetailedBookingDTO oldBooking = bookingService.getBookingById(bookingId);
         RoomDto oldRoom = oldBooking.getRoom();
 
@@ -132,23 +116,6 @@ public class BookingController {
         return "redirect:/bookings/details/" + bookingId;
     }
 
-    @GetMapping("/create/{bookingId}/room-availability-update")
-    public String showRoomAvailabilityUpdateGet(
-            @PathVariable Long bookingId,
-            Model model) {
-
-        DetailedBookingDTO booking = bookingService.getBookingById(bookingId);
-        if (booking == null) {
-            model.addAttribute("error", "Booking not found");
-            return "redirect:/bookings/all/" + bookingId;
-        }
-
-        model.addAttribute("booking", booking);
-        // You can optionally set defaults for startDate, endDate, numberOfGuests if you want.
-
-        return "redirect:/bookings/details/" + bookingId;
-    }
-
 
 
    @PostMapping("/create/{bookingId}/room-availability-update")
@@ -160,7 +127,22 @@ public class BookingController {
             return "redirect:/customers/all";
         }
 
-        DetailedCustomerDto customerDto = customerService.getCustomerById(bookingService.getBookingById(bookingId).getCustomer().getId());
+       if (numberOfGuests < 1 || numberOfGuests > 4) {
+           model.addAttribute("error", "Number of guests must be between 1 and 4");
+           return showBookingDetails(bookingId, model);
+       }
+
+       if (!bookingService.checkDates(startDate)){
+           model.addAttribute("error", "Please check that entered dates are in the uncertain future and not the unreachable passed.");
+           return showBookingDetails(bookingId, model);
+       }
+
+       if(!bookingService.checkDateOrder(startDate, endDate)) {
+           model.addAttribute("error", "Start date must come before end date");
+           return showBookingDetails(bookingId, model);
+       }
+
+       DetailedCustomerDto customerDto = customerService.getCustomerById(bookingService.getBookingById(bookingId).getCustomer().getId());
 
 
         if (customerDto == null) {
@@ -184,6 +166,23 @@ public class BookingController {
         model.addAttribute("booking", booking);
 
         return "detailedBooking";
+    }
+
+    @GetMapping("/create/{bookingId}/room-availability-update")
+    public String showRoomAvailabilityUpdateGet(
+            @PathVariable Long bookingId,
+            Model model) {
+
+        DetailedBookingDTO booking = bookingService.getBookingById(bookingId);
+        if (booking == null) {
+            model.addAttribute("error", "Booking not found");
+            return "redirect:/bookings/all/" + bookingId;
+        }
+
+        model.addAttribute("booking", booking);
+        // You can optionally set defaults for startDate, endDate, numberOfGuests if you want.
+
+        return "redirect:/bookings/details/" + bookingId;
     }
 
     @RequestMapping(path = "/deleteById/{id}")
