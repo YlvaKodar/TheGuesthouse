@@ -8,6 +8,7 @@ class TheGuesthouseApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }

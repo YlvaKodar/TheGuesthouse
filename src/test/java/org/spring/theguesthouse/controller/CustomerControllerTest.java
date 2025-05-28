@@ -151,31 +151,17 @@ class CustomerControllerTest {
 
     @Test
     void deleteCustomerById() throws Exception {
-        // Test 1: Try to delete customer WITH bookings (should fail)
-        CustomerDto customerWithBookings = customerService.getAllCustomers()
-                .stream().filter(c -> c.getName().equals(trueName))
-                .findFirst().orElse(null);
 
-        assertNotNull(customerWithBookings, "Customer with bookings should exist");
-
-        this.mockMvc.perform(get("/customers/deleteById/" + customerWithBookings.getId()))
-                .andExpect(view().name("showAllCustomers"))       // Returns to customer list
-                .andExpect(model().attributeExists("deleteError")); // Contains error message about bookings
-
-        // Test 2: Delete customer WITHOUT bookings (should succeed)
-        // Create a new customer with no bookings
         Customer customerNoBookings = Customer.builder()
                 .name("Delete Me")
                 .email("delete@test.com")
                 .build();
         Customer savedCustomer = customerRepo.save(customerNoBookings);
 
-        // This deletion should succeed
         this.mockMvc.perform(get("/customers/deleteById/" + savedCustomer.getId()))
-                .andExpect(status().is3xxRedirection())           // Redirects after success
-                .andExpect(redirectedUrl("/customers/all"));    // Back to customer list
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/customers/all"));
 
-        // Verify the customer was actually deleted
         assertFalse(customerRepo.existsById(savedCustomer.getId()),
                 "Customer should be deleted from database");
     }

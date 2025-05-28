@@ -1,6 +1,8 @@
 package org.spring.theguesthouse.service.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import jdk.swing.interop.SwingInterOpUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.spring.theguesthouse.dto.CustomerDto;
@@ -15,6 +17,7 @@ import org.spring.theguesthouse.repository.RoomRepo;
 import org.spring.theguesthouse.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,8 @@ import java.util.List;
 @ActiveProfiles("test")
 @Transactional
 @Rollback
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) //Utan den här funkar inte add- och deletetester,
+    //för testdatabasen hinner inte städa upp. Testerna körs långsammare. (Provat annat, men bara den här har funkat.)
 class CustomerServiceImplTest {
 
     @Autowired
@@ -51,7 +56,7 @@ class CustomerServiceImplTest {
         roomRepo.save(r2);
         roomRepo.save(r3);
 
-        Customer c1 = Customer.builder().name("Maja Gräddnos").email("maja@asgrand.ua").build();
+        Customer c1 = Customer.builder().name(trueName).email("maja@asgrand.ua").build();
         Customer c2 = Customer.builder().name("Gammel-Maja").email("maja@domkyrkotornet.ua").build();
         Customer c3 = Customer.builder().name("Gullan von Arkadien").email("gullan@arkadien.ua").build();
 
@@ -105,21 +110,48 @@ class CustomerServiceImplTest {
 
     @Test
     void customerToDetailedCustomerDto() {
+        Customer c = Customer.builder().name("Emma").email("emma@gmail.com").build();
+        DetailedCustomerDto cdto = customerService.customerToDetailedCustomerDto(c);
+        assertEquals("Emma", cdto.getName());
+        assertFalse(cdto.getName().equals(trueName));
+        assertNotNull(cdto);
     }
 
     @Test
     void getCustomerById() {
+            DetailedCustomerDto c = customerService.getCustomerById(1L);
+            assertEquals(trueName, c.getName());
+            assertNotEquals(c.getName(), falseName);
     }
 
     @Test
     void addCustomer() {
+        List<CustomerDto> allCustomers = customerService.getAllCustomers();
+        assertTrue(allCustomers.size() == 3);
+        customerService.addCustomer(DetailedCustomerDto.builder().name("Emma").email("emma@gmail.com").build());
+        List<CustomerDto> newAllCustomers = customerService.getAllCustomers();
+        assertFalse(newAllCustomers.size() == 3);
+        assertTrue(newAllCustomers.size() == 4);
     }
 
     @Test
     void deleteCustomerById() {
+        List<CustomerDto> allCustomers = customerService.getAllCustomers();
+        assertTrue(allCustomers.size() == 3);
+        customerService.deleteCustomerById(2L);
+        List<CustomerDto> newAllCustomers = customerService.getAllCustomers();
+        assertFalse(newAllCustomers.size() == 3);
+        assertTrue(newAllCustomers.size() == 2);
     }
 
     @Test
     void updateCustomer() {
+        DetailedCustomerDto dto = customerService.getCustomerById(1L);
+        assertTrue(dto.getName().equals(trueName));
+        assertFalse(dto.getName().equals(falseName));
+        DetailedCustomerDto dtoUpdate = DetailedCustomerDto.builder().id(1L).name(falseName).email(dto.getEmail()).build();
+        customerService.updateCustomer(dtoUpdate);
+        DetailedCustomerDto updatedDto = customerService.getCustomerById(1L);
+        assertTrue(updatedDto.getName().equals(falseName));
     }
 }
