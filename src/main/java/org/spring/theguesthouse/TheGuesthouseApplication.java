@@ -20,7 +20,7 @@ public class TheGuesthouseApplication {
         SpringApplication.run(TheGuesthouseApplication.class, args);
     }
 
-      @Bean
+     /* @Bean
     public CommandLineRunner commandLineRunner(BookingRepo bookingRepo, CustomerRepo customerRepo, RoomRepo roomRepo) {
         return args -> {
 
@@ -82,5 +82,5 @@ public class TheGuesthouseApplication {
 
         };
 
-    }
+    }*/
 }
