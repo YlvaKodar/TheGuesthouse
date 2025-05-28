@@ -45,20 +45,10 @@ public class BookingServiceImpl implements BookingService {
                 .room(RoomDto.builder()
                         .id(booking.getRoom().getId())
                         .roomNumber(booking.getRoom().getRoomNumber())
+                        .maxGuests(booking.getRoom().getMaxGuests())
                         .build())
                 .build();
     }
-
-    /*
-
-    @Override
-    public DetailedBookingDTO bookingToDetailedDto(Booking booking) {
-        return DetailedBookingDTO.builder().id(booking.getId())
-                .startDate(booking.getStartDate()).endDate(booking.getEndDate())
-                .customer(new CustomerDto(booking.getCustomer().getId(), booking.getCustomer().getName()))
-                .room(new RoomDto(booking.getRoom().getId(), booking.getRoom().getRoomNumber()))
-                .build();
-    }*/
 
     @Override
     public Booking detailedBookingDtoToBooking(DetailedBookingDTO dto) {
@@ -99,24 +89,18 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public DetailedBookingDTO updateBooking(DetailedBookingDTO booking) {
-        // Validate input
         Booking existingBooking = bookingRepo.findById(booking.getId()).orElseThrow(() -> new RuntimeException("Booking with id" + booking.getId() + " not found"));
 
-        //DESSA ÄR ANTINGEN DUBBELJOBB ELLER EXTRA SÄKERHETSBÄLTE
-        // Validate dates
         if(!(checkDates(booking.getStartDate()) || checkDateOrder(booking.getStartDate(), booking.getEndDate()))) {
             throw new RuntimeException("Booking dates are wrong.");
         }
 
-        // Save the updated booking info
         existingBooking.setStartDate(booking.getStartDate());
         existingBooking.setEndDate(booking.getEndDate());
         existingBooking.setNumberOfGuests(booking.getNumberOfGuests());
         existingBooking.setRoom(roomRepo.findById(booking.getRoom().getId()).orElseThrow(() -> new RuntimeException("Room reference is missing")));
 
         bookingRepo.save(existingBooking);
-
-        //Vet inte varför du vill göra return
         return booking;
     }
 

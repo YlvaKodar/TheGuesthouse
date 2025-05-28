@@ -1,5 +1,6 @@
 package org.spring.theguesthouse.controller;
 
+import jakarta.servlet.ServletOutputStream;
 import lombok.RequiredArgsConstructor;
 import org.spring.theguesthouse.dto.*;
 import org.spring.theguesthouse.dto.BookingDTO;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -50,7 +52,7 @@ public class BookingController {
 
         if (booking == null) {
             model.addAttribute("error", "Booking not found.");
-            return "errorPage";  // or redirect somewhere appropriate
+            return "errorPage";
 
         }
         model.addAttribute("booking", booking);
@@ -119,9 +121,11 @@ public class BookingController {
 
 
    @PostMapping("/create/{bookingId}/room-availability-update")
-    public String showRoomAvailabilityUpdate(@PathVariable Long bookingId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, Model model) {
+    public String showRoomAvailabilityUpdate(@PathVariable Long bookingId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate,
+                                             @RequestParam int numberOfGuests, Model model, RedirectAttributes redirectAttributes) {
 
         DetailedBookingDTO booking = bookingService.getBookingById(bookingId);
+
         if (booking == null) {
             model.addAttribute("error", "Booking not found");
             return "redirect:/customers/all";
@@ -134,21 +138,39 @@ public class BookingController {
 
        if (!bookingService.checkDates(startDate)){
            model.addAttribute("error", "Please check that entered dates are in the uncertain future and not the unreachable passed.");
+           model.addAttribute("startDate", startDate);
+           model.addAttribute("endDate", endDate);
            return showBookingDetails(bookingId, model);
        }
 
        if(!bookingService.checkDateOrder(startDate, endDate)) {
            model.addAttribute("error", "Start date must come before end date");
+           model.addAttribute("startDate", startDate);
+           model.addAttribute("endDate", endDate);
            return showBookingDetails(bookingId, model);
        }
 
        DetailedCustomerDto customerDto = customerService.getCustomerById(bookingService.getBookingById(bookingId).getCustomer().getId());
 
-
         if (customerDto == null) {
             model.addAttribute("error", "Could not get customer id. Please try again");
             return "redirect:/customers/all";
         }
+
+       RoomDto oldRoom = booking.getRoom();
+       CustomerDto cdto = CustomerDto.builder().id(customerDto.getId()).name(customerDto.getName()).build();
+
+       //Om gamla rummet är ok med nya datum och antal gäster sparar vi det direkt.
+       if (oldRoom.getMaxGuests() == numberOfGuests) {
+           System.out.println("Old room can accommodate guests");
+           if (roomService.isRoomAvailable(oldRoom.getId(), startDate, endDate, bookingId)) {
+               DetailedBookingDTO updatedBooking = DetailedBookingDTO.builder()
+                       .id(bookingId).startDate(startDate).endDate(endDate).customer(cdto).numberOfGuests(numberOfGuests).room(oldRoom).build();
+               bookingService.updateBooking(updatedBooking);
+               redirectAttributes.addFlashAttribute("success", "Booking updated successfully!");
+               return "redirect:/bookings/details/" + bookingId;
+           }
+       }
 
         List<RoomDto> availableRooms = roomService.getAllAvailableRooms(startDate, endDate, numberOfGuests);
 
@@ -156,7 +178,6 @@ public class BookingController {
             model.addAttribute("error", "There are no available rooms");
             return "redirect:/customers/all";
         }
-
 
         model.addAttribute("availableRooms", availableRooms);
         model.addAttribute("customer", customerDto);
@@ -180,7 +201,6 @@ public class BookingController {
         }
 
         model.addAttribute("booking", booking);
-        // You can optionally set defaults for startDate, endDate, numberOfGuests if you want.
 
         return "redirect:/bookings/details/" + bookingId;
     }

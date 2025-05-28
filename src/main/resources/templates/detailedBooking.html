@@ -21,6 +21,12 @@
     display: block;
     margin-top: 2px;
   }
+  .success {
+    color: green;
+    font-size: 12px;
+    display: block;
+    margin-top: 2px;
+  }
 
 </style>
 <table>
@@ -51,6 +57,7 @@
 </table>
 <h3>Update Booking</h3>
 <span th:if="${error}" th:text="${error}" class="error"></span>
+<span th:if="${success}" th:text="${success}" class="success"></span>
 <h4>Select Dates</h4>
 <p>Booking ID: <span th:text="${booking.id}">[Missing]</span></p>
 
