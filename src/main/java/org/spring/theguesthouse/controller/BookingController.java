@@ -230,19 +230,22 @@ public class BookingController {
     @PostMapping("/create/{customerId}")
     public String createBooking(@PathVariable Long customerId, @RequestParam LocalDate startDate, @RequestParam LocalDate endDate, @RequestParam int numberOfGuests, @RequestParam Long roomId, Model model) {
 
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+
         if (numberOfGuests < 1 || numberOfGuests > 4) {
             model.addAttribute("error", "Number of guests must be between 1 and 4");
-            return "createBooking";
+            return showCreateBooking(customerId, model);
         }
 
         if (!bookingService.checkDates(startDate)){
             model.addAttribute("error", "Please check that entered dates are in the uncertain future and not the unreachable passed.");
-            return "redirect:/bookings/all";
+            return showCreateBooking(customerId, model);
         }
 
         if(!bookingService.checkDateOrder(startDate, endDate)) {
-            model.addAttribute("error", "Start date must end date be before end date");
-            return "redirect:/bookings/all";
+            model.addAttribute("error", "Start date must be before end date");
+            return showCreateBooking(customerId, model);
         }
 
         CustomerDto customer = CustomerDto.builder().id(customerId).build();

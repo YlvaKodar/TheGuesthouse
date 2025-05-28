@@ -15,10 +15,17 @@
     th:first-child, td:first-child {
       width: 50px; /* ID-kolumn lite smalare */
     }
+    .error {
+      color: red;
+      font-size: 12px;
+      display: block;
+      margin-top: 2px;
+    }
   </style>
 </head>
 <body>
 <h3>Create Booking</h3>
+<span th:if="${error}" th:text="${error}" class="error"></span>
 <h4>Select Dates</h4>
 <form th:action="@{/bookings/create/{id}/room-availability(id=${customer.id})}" method="post">
   <div th:include="bookingForm"></div>
