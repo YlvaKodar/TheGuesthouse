@@ -39,19 +39,4 @@ public class Customer {
     @Builder.Default
     private List<Booking> bookings = new ArrayList<>();
 
-    /* Helper method for relationship management
-    public void addBooking(Booking booking) {
-        if (booking == null) {
-            throw new IllegalArgumentException("Booking cannot be null");
-        }
-        bookings.add(booking);
-        booking.setCustomer(this);
-    }
-
-    public void removeBooking(Booking booking) {
-        if (booking != null) {
-            bookings.remove(booking);
-            booking.setCustomer(null);
-        }
-    } */
 }
